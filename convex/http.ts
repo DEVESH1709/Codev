@@ -1,6 +1,7 @@
 import { httpAction } from './_generated/server';
 import {httpRouter} from "convex/server"
-
+import { WebhookEvent } from '@clerk/nextjs/server';
+import { Webhook } from 'svix';
 const http= httpRouter();
 
 http.route({
@@ -28,6 +29,35 @@ http.route({
       const wh = new Webhook(webhookSecret);
       let evt: WebhookEvent;
   
-     
+      try {
+        evt = wh.verify(body, {
+          "svix-id": svix_id,
+          "svix-timestamp": svix_timestamp,
+          "svix-signature": svix_signature,
+        }) as WebhookEvent;
+      } catch (err) {
+        console.error("Error verifying webhook:", err);
+        return new Response("Error occurred", { status: 400 });
+      }
+  
+      const eventType = evt.type;
+      if (eventType === "user.created") {
+        // save the user to convex db
+        const { id, email_addresses, first_name, last_name } = evt.data;
+  
+        const email = email_addresses[0].email_address;
+        const name = `${first_name || ""} ${last_name || ""}`.trim();
+  
+        try {
+         
+        } catch (error) {
+          console.log("Error creating user:", error);
+          return new Response("Error creating user", { status: 500 });
+        }
+      }
+  
+      return new Response("Webhook processed successfully", { status: 200 });
     }),
   });
+
+  export default http;
