@@ -1,3 +1,4 @@
+import { SignedIn } from "@clerk/nextjs";
 import { currentUser } from "@clerk/nextjs/server";
 import {ConvexHttpClient} from "convex/browser"
 import { Code2, Sparkles } from "lucide-react";
@@ -62,10 +63,8 @@ async function Header() {
             </Link>
           </nav>
 </div>
-        </div>
 
-
-        <div className="flex items-center gap-4">
+<div className="flex items-center gap-4">
             <div className="flex items-center gap-3">
                 <ThemeSelector></ThemeSelector>
                 <LanguageSelector hasAccess={Boolean(convexUser?.isPro)}></LanguageSelector>
@@ -77,9 +76,20 @@ async function Header() {
         
         </Link>
        )}
+<SignedIn>
+    <RunButton></RunButton>
+</SignedIn>
+
+<div className="pl-3 boreder-l border-gray-800">
+    <HeaderProfileButton></HeaderProfileButton>
+    
+</div>
+
+        </div>
+        </div>
+
 
        
-        </div>
     </div>
 
     
