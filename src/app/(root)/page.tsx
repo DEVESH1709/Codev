@@ -1,5 +1,7 @@
 import Image from "next/image";
-
+import Header from "./_components/Header"
+import Editor from "./_components/EditorPanel"
+import Footer from "./_components/Footer"
 export default function Home() {
   return (
   <div className="min-h-screen">
