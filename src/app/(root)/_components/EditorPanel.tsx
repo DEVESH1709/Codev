@@ -26,12 +26,14 @@ if(editor)editor.setValue(newCode)
 useEffect(()=>{
     const savedFontSize= localStorage.getItem("editor-font-size")
   
-    if(savedFontSize) setFontSize(parseInt(saveFontSize));
+    if(savedFontSize) setFontSize(parseInt(savedFontSize));
     },[setFontSize])
     
 
-    const handelRefresh= ()=>{
-
+    const handleRefresh= ()=>{
+const defaultCode =LANGUAGE_CONFIG[language].defaultCode;
+if(editor) editor.setValue( defaultCode);
+localStorage.removeItem(`editor-code-${language}`);
     }
 
     const handleEditorChange=()=>{
@@ -39,11 +41,13 @@ useEffect(()=>{
     }
 
     const handleFontSizeChange=(newSize:number)=>{
-
-    }
+const size =Math.min(Math.max(newSize,12),24);
+  setFontSize(size);
+  localStorage.setItem("editor-font-size",size.toString());
+    };
 
     if(!mounted){
-        return <EditorViewSkeleton/>
+        return null;
     }
 
 return (
