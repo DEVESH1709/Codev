@@ -5,8 +5,7 @@ import {THEMES} from "../_constants"
 import { useCodeEditorStore } from "@/store/useCodeEditorStore";
 import { AnimatePresence, motion } from "framer-motion";
 import { CircleOff, Cloud, Github, Laptop, Moon, Palette, Sun } from "lucide-react";
-
-
+import useMounted from "@/hooks/useMounted";
 
 
 
