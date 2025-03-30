@@ -1,11 +1,11 @@
-import { useCodeEditorStore } from './useCodeEditorStore';
+
 import { LANGUAGE_CONFIG } from './../app/(root)/_constants';
 import {create} from "zustand"
 import { Monaco } from "@monaco-editor/react"
 import { Languages } from 'lucide-react';
+import { version } from 'os';
 
-export const useCodeEditorStore =create <CodeEditorState>((set,get)=>{
-    
+
    
    // initialy kuch values set hongi
    
@@ -78,7 +78,34 @@ export const useCodeEditorStore = craete<CodeEditorState>((set,get)){
     },
 
     runCode: async () => {
-        
+        const [language,getCode] = get();
+        const code =getCode();
+
+        if(!code){
+            set({error: "Please enter some code"})
+            return
+        }
+
+        set ({isRunning :true, error :null, ouytput :"" })
+
+        try{
+              const runtime =LANGUAGE_CONFIG[language].pistonRuntime;
+              const response =await fetch ("https://emkc.org/api/v2/position/execute",{
+                method: "POST",
+                headers:{
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    language:runtime.language,
+                    version:runtime.version,
+                    files:[{content:code}]
+              })
+
+              const data =await response.json;
+              
+        } catch(error){
+
+        }
     }
   
 };
