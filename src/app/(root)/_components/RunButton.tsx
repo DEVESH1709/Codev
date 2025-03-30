@@ -8,7 +8,11 @@ function RunButton (){
    const { runCode, language,isRunning, executionResult}= useCodeEditorStore();
 
    const handleRun =async ()=>{
+  await runCode()
 
+  if(user && executionResult){
+     
+  }
    }
    return (
     <motion.button
