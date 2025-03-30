@@ -101,8 +101,29 @@ export const useCodeEditorStore = craete<CodeEditorState>((set,get)){
                     files:[{content:code}]
               })
 
-              const data =await response.json;
-              
+              const data =await response.json();
+
+              console.log("data back from piston",data);
+
+              // handling API-level errors
+
+              if(data.message){
+                set({error: data.message, executionResult:{code,output:"",error:data.message}})
+                return
+              }
+
+              // handling compilation error
+              if(data.compile && data.compile.code!==0){
+                const error =data.compile.stderr || data.compile.output;
+                set({
+                    error,executionResult:{
+                        code,
+                        output:"",
+                        error
+                    }
+                })
+                return
+              }
         } catch(error){
 
         }
