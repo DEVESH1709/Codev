@@ -36,7 +36,8 @@ if(editor) editor.setValue( defaultCode);
 localStorage.removeItem(`editor-code-${language}`);
     }
 
-    const handleEditorChange=()=>{
+    const handleEditorChange=(value:string| undefined)=>{
+        if(value) localStorage.setItem(`editor-code-${language}`,value)
 
     }
 
