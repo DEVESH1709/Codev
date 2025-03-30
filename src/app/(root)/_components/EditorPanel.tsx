@@ -6,11 +6,15 @@ import {motion} from "framer-motion"
 import Image from "next/image";
 import {RotateCcwIcon, ShareIcon, TypeIcon} from "lucide-react";
 import { useClerk } from "@clerk/nextjs";
+import { EditorPanelSkeleton ,EditorViewSkeleton} from "./EditorPanelSkeleton";
+import useMounted from "@/hooks/useMounted";
 
 function EditorPanel(){
     const clerk= useClerk();
 const [isShareDialogOpen,setShareDialogOpen] =useState(false);
 const {language,theme,fontSize,editor,setFontSize,setEditor}= useCodeEditorStore();
+
+ const mounted =useMounted()
 
 useEffect(()=>{
 const savedCode = localStorage.getItem(`editor-code-${language}`)
@@ -36,6 +40,10 @@ useEffect(()=>{
 
     const handleFontSizeChange=(newSize:number)=>{
 
+    }
+
+    if(!mounted){
+        return <EditorViewSkeleton/>
     }
 
 return (
