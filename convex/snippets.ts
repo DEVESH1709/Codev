@@ -72,6 +72,6 @@ export const getSnippetsStarCount= query({
         .filter((q)=>q.eq(q.field("snippetId"),args.snippetsId))
        .collect();
 
-       return stars.length;
+       return star.length;
     }
 })
