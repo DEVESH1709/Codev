@@ -59,3 +59,19 @@ export const isSnippetsStarred = query({
     
         }
 })
+
+
+
+export const getSnippetsStarCount= query({
+
+    args:{snippetsId:v.id("snippets")},
+    handler:async(ctx,args)=>{
+        const star =await ctx.db
+        .query("stars")
+        .withIndex("by_snippet_id")
+        .filter((q)=>q.eq(q.field("snippetId"),args.snippetsId))
+       .collect();
+
+       return stars.length;
+    }
+})
