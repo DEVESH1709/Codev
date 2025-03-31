@@ -79,6 +79,75 @@ return (
           </div>
 
 
+         {/* Filters Bar */}
+         <div className="flex flex-wrap items-center gap-4">
+            <div className="flex items-center gap-2 px-4 py-2 bg-[#1e1e2e] rounded-lg ring-1 ring-gray-800">
+              <Tag className="w-4 h-4 text-gray-400" />
+              <span className="text-sm text-gray-400">Languages:</span>
+            </div>
+
+            {popularLanguages.map((lang) => (
+              <button
+                key={lang}
+                onClick={() => setSelectedLanguage(lang === selectedLanguage ? null : lang)}
+                className={`
+                    group relative px-3 py-1.5 rounded-lg transition-all duration-200
+                    ${
+                      selectedLanguage === lang
+                        ? "text-blue-400 bg-blue-500/10 ring-2 ring-blue-500/50"
+                        : "text-gray-400 hover:text-gray-300 bg-[#1e1e2e] hover:bg-[#262637] ring-1 ring-gray-800"
+                    }
+                  `}
+              >
+                <div className="flex items-center gap-2">
+                  <img src={`/${lang}.png`} alt={lang} className="w-4 h-4 object-contain" />
+                  <span className="text-sm">{lang}</span>
+                </div>
+              </button>
+            ))}
+
+            {selectedLanguage && (
+              <button
+                onClick={() => setSelectedLanguage(null)}
+                className="flex items-center gap-1 px-2 py-1 text-xs text-gray-400 hover:text-gray-300 transition-colors"
+              >
+                <X className="w-3 h-3" />
+                Clear
+              </button>
+            )}
+
+            <div className="ml-auto flex items-center gap-3">
+              <span className="text-sm text-gray-500">
+                {filteredSnippets.length} snippets found
+              </span>
+
+              {/* View Toggle */}
+              <div className="flex items-center gap-1 p-1 bg-[#1e1e2e] rounded-lg ring-1 ring-gray-800">
+                <button
+                  onClick={() => setView("grid")}
+                  className={`p-2 rounded-md transition-all ${
+                    view === "grid"
+                      ? "bg-blue-500/20 text-blue-400"
+                      : "text-gray-400 hover:text-gray-300 hover:bg-[#262637]"
+                  }`}
+                >
+                  <Grid className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={() => setView("list")}
+                  className={`p-2 rounded-md transition-all ${
+                    view === "list"
+                      ? "bg-blue-500/20 text-blue-400"
+                      : "text-gray-400 hover:text-gray-300 hover:bg-[#262637]"
+                  }`}
+                >
+                  <Layers className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
         </div>
         
     </div>
