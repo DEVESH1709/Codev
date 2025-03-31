@@ -4,7 +4,7 @@ import { useState } from "react";
 import NavigationHeader from "@/components/NavigationHeader";
 import SnippetsPageSkeleton from "./_components/SnippetsPageSkeleton";
 
-import {motion} from "framer-motion"
+import {AnimatePresence, motion} from "framer-motion"
 function SnippetsPage(){
   const snippets = useQuery(api.snippets.getSnippets);
   const [searchQuery,setSearchQuery]= useState("");
@@ -23,6 +23,20 @@ return (
 </div>
   )
 }
+
+const languages = [...new Set(snippets.map((s)=> s.language))]
+const popularLanguages = languages.slice(0,5);
+ const filteredSnippets =snippets.filter(snippet=>{
+    const matchesSearch =
+    snippet.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    snippet.language.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    snippet.userName.toLowerCase().includes(searchQuery.toLowerCase());
+
+
+     const matchesLanguage =!selectedLanguage || snippet.language === selectedLanguage;
+
+     return matchesSearch && matchesLanguage;
+ });
 
 
 return (
@@ -148,6 +162,22 @@ return (
           </div>
         </div>
 
+{/* Snippets Grid */}
+
+<motion.div
+          className={`grid gap-6 ${
+            view === "grid"
+              ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
+              : "grid-cols-1 max-w-3xl mx-auto"
+          }`}
+          layout
+        >
+<AnimatePresence mode ="popLayout">
+
+    {filteredSnippets.map(snippet=>{
+        <SnippetCard key={snippet._id} snippet= {snippet}></SnippetCard>
+    })}
+</AnimatePresence>
         </div>
         
     </div>
