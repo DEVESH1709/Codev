@@ -33,6 +33,48 @@ handler: async (ctx,args)=>{
 },
 });
 
+export const deleteSnippet =mutation({
+    args:{
+        snippetId:v.id("snippets"),
+    },
+
+    handler:async(ctx,args)=>{
+        const identity = await ctx.auth.getUserIdentity();
+        if(!identity) throw new Error("Not authenticated");
+
+        const snippet =await ctx.db.get(args.snippetId);
+        if(!snippet) throw new Error ("Snippet not found");
+
+        if(snippet.userId!==identity.subject){
+            throw new Error("You don't have permission to delete this snippet");
+        }
+        await ctx.db.delete(args.snippetId);
+
+        const comments = await ctx.db
+      .query("snippetComments")
+      .withIndex("by_snippet_id")
+      .filter((q) => q.eq(q.field("snippetId"), args.snippetId))
+      .collect();
+   
+
+      for (const comment of comments) {
+        await ctx.db.delete(comment._id);
+      }
+
+      const stars = await ctx.db
+      .query("stars")
+      .withIndex("by_snippet_id")
+      .filter((q) => q.eq(q.field("snippetId"), args.snippetId))
+      .collect();
+
+    for (const star of stars) {
+      await ctx.db.delete(star._id);
+    }
+
+    await ctx.db.delete(args.snippetId);
+  }
+})
+
 
 export const getSnippets= query({
     handler:async(ctx)=>{
