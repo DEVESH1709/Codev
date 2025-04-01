@@ -1,3 +1,4 @@
+import { getSnippets } from './snippets';
 import { mutation,query } from "./_generated/server";
 import {v} from "convex/values"
 
@@ -111,6 +112,20 @@ export const getSnippets= query({
 
     }
 })
+
+export const getSnippetById =query({
+    args:{snippetId:v.id("snippets")},
+    handler:async(ctx,args)=>{
+        const snippet =await ctx.db.get(args.snippetsId);
+        if(!snippet) throw new Error ("Snippet not found");
+
+return snippet;
+}
+})
+
+
+
+
 
 export const isSnippetsStarred = query({
     args:{
