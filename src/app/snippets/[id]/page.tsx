@@ -2,7 +2,11 @@
 import {useParams} from "next/navigation";
 function page() {
     const snippetId =useParams().id;
-    console.log ({snippetId});
+ cosnt snippet =useQuery(api.snippets.getSnippetById,{snippetId: snippetId a Id<"snippets">});
+
+if(snippet === undefined ) return <SnippetLoadSkeleton></SnippetLoadSkeleton>
+
+
   return (
     <div>
       snippet detail page
