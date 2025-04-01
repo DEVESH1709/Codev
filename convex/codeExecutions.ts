@@ -1,5 +1,6 @@
 
-import {mutation} from "./_generated/server"
+import { mutation, query } from "./_generated/server";
+import { paginationOptsValidator } from "convex/server";
 import {ConvexError,v} from "convex/values";
 
 export const saveExecution= mutation({
@@ -32,3 +33,21 @@ export const saveExecution= mutation({
 
     }
 })
+
+export const getUserExecutions = query({
+    args :{
+        userId: v.string(),
+        paginationOpts:paginationOptsValidator,
+    },
+
+    handler:async (ctx,args)=>{
+        return await ctx.db
+        .query("codeExecutions")
+        .withIndex("by_user_id")
+        .filter((q)=> q.eq(q.field("userId"),args.userId))
+        .order("desc")
+        .paginate(args.paginationOpts);
+        
+    },
+});
+
