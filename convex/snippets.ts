@@ -124,7 +124,19 @@ return snippet;
 })
 
 
+export const getComments = query({
+    args: {snippetId: v.id("snippets")},
+    handler:async(ctx,args)=>{
+          const comments= await ctx.db
+          .query("snippetsComments")
+          .withIndex("by_snippet_id")
+          .filter(q => q.eq(q.field("snippetId"), args.snippetId))
+          .order("desc")
+          .collect();
 
+          return comments;
+    },
+})
 
 
 export const isSnippetsStarred = query({
