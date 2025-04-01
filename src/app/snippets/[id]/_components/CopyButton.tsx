@@ -13,6 +13,7 @@ function CopyBuuton ({code}:{code:string}) {
   return (
    <button
    onClick={copyToClipboard}
+   type="button"
    className=" p-2 hover:bg-white/10 rounded-bg transition-all duration-200 group relative"
    >
  {copied ?(
