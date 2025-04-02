@@ -1,3 +1,4 @@
+import CodeBlock from "./CodeBlock";
 
 
 function CommentContent ({content} :{content:string}){
