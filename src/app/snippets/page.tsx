@@ -30,7 +30,7 @@ return (
 
 const languages = [...new Set(snippets.map((s)=> s.language))]
 const popularLanguages = languages.slice(0,5);
- const filteredSnippets =snippets.filter(snippet=>{
+ const filteredSnippets =snippets.filter((snippet)=>{
     const matchesSearch =
     snippet.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
     snippet.language.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -178,9 +178,9 @@ return (
         >
 <AnimatePresence mode ="popLayout">
 
-    {filteredSnippets.map(snippet=>{
+    {filteredSnippets.map((snippet)=>(
         <SnippetCard key={snippet._id} snippet= {snippet}></SnippetCard>
-    })}
+    ))}
 </AnimatePresence>
 </motion.div>
 

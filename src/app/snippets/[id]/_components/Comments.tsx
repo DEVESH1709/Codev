@@ -2,11 +2,15 @@ import { useState } from "react";
 import { Id } from "../../../../../convex/_generated/dataModel";
 import { api } from "../../../../../convex/_generated/api";
 import toast from "react-hot-toast";
-
+import Comment from "./Comment";
+import { SignInButton, useUser } from "@clerk/nextjs";
+import { useMutation, useQuery } from "convex/react";
+import { MessageSquare } from "lucide-react";
+import CommentForm from "./CommentForm";
 
 function Comments({snippetId}:{anippetsId:Id<"snippets">}){
     const user =useUser();
-    const {isSubmitting, setIsSubmitting} = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const [deleteCommentId,setDeleteCommentId] =useState<string |null>(null);
     
     const comments =useQuery(api.snippets.getComments,{snippetId}) || [];
@@ -42,7 +46,7 @@ await deleteComment({commentId});
     return <div className="bg-[#121218] border border-[#ffffff0a] rounded-2xl overflow-hidden">
        <div className="px-6 sm:px-8 py-6 border-[#ffffff0a]">
 <h2 className="text-lg font-semibold text-white flex items-center gap-2">
-    <MessageSquare  className="w-5 h-5">
+    <MessageSquare className="w-5 h-5">
 
     </MessageSquare>
     Discussion
