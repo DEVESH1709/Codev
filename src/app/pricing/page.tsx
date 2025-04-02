@@ -3,6 +3,11 @@ import { ConvexHttpClient } from 'convex/browser';
 import React from 'react'
 import ProPlanView from './_components/ProPlanView';
 import NavigationHeader from '@/components/NavigationHeader';
+import FeatureCategory from './_components/FeatureCategory';
+import { SignedIn, SignedOut } from '@clerk/nextjs';
+import FeatureItem from './_components/FeatureItem';
+import { ENTERPRISE_FEATURES, FEATURES } from './_constant';
+import { Star } from 'lucide-react';
 
 async function PricingPage() {
     const user= await currentUser();
@@ -109,6 +114,40 @@ async function PricingPage() {
                   </div>
                   <p className="text-gray-400 text-lg">Unlock the full potential of CodeCraft</p>
                 </div>
+
+                <div className="grid md:grid-cols-3 gap-12 mb-12">
+                  <FeatureCategory label="Development">
+                    {FEATURES.development.map((feature, idx) => (
+                      <FeatureItem key={idx}>{feature}</FeatureItem>
+                    ))}
+                  </FeatureCategory>
+
+                  <FeatureCategory label="Collaboration">
+                    {FEATURES.collaboration.map((feature, idx) => (
+                      <FeatureItem key={idx}>{feature}</FeatureItem>
+                    ))}
+                  </FeatureCategory>
+
+                  <FeatureCategory label="Deployment">
+                    {FEATURES.deployment.map((feature, idx) => (
+                      <FeatureItem key={idx}>{feature}</FeatureItem>
+                    ))}
+                  </FeatureCategory>
+                </div>
+
+                {/* CTA */}
+                <div className="flex justify-center">
+                  <SignedIn>
+                    <UpgradeButton />
+                  </SignedIn>
+
+                  <SignedOut>
+                    <LoginButton />
+                  </SignedOut>
+                </div>
+              </div>
+            </div>
+          </div>
          </div>
         </main>
     </div>

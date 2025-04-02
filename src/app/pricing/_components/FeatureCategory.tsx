@@ -17,4 +17,4 @@ children,label,
   
 
 
-export default FeatureCategory
+export default FeatureCategory;
