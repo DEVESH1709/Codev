@@ -2,11 +2,25 @@ import { useUser } from "@clerk/nextjs";
 import { useQueries } from "convex/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { ChevronRight, Clock, Code, ListVideo, Loader2, Star } from "lucide-react";
 import { api } from "../../../convex/_generated/api";
 import NavigationHeader from "@/components/NavigationHeader";
 import ProfileHeaderSkeleton from "./_components/ProfileHeaderSkeleton";
 
-import {motion} from "framer-motion"
+import {AnimatePresence, motion} from "framer-motion"
+
+const TABS = [
+    {
+      id: "executions",
+      label: "Code Executions",
+      icon: ListVideo,
+    },
+    {
+      id: "starred",
+      label: "Starred Snippets",
+      icon: Star,
+    },
+  ];
 function ProfilePage() {
 
     const {user,isLoaded} = useUser();
@@ -68,6 +82,22 @@ function ProfilePage() {
               ))}
             </div>
           </div>
+
+<AnimatePresence mode="wait">
+    <motion.div
+       key={activeTab}
+       initial={{opacity:0,y:10}}
+       animate={{opacity:1,y:0}}
+       exit={{opacity:0,y:-10}}
+       transition={{duration:0.2}}
+       className="p-6"
+ 
+    >
+        
+    </motion.div>
+</AnimatePresence>
+
+
 
             </div>
         </div>
