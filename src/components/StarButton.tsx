@@ -1,10 +1,14 @@
 import React from 'react'
-import {Id} from "../../convex/_genrated/dataModel"
-function StarButton({snippet}:{snippetId:Id<"snippets">}) {
+import { Id } from "../../convex/_generated/dataModel";
+import { Star } from 'lucide-react';
+import { useAuth } from '@clerk/nextjs';
+import { api } from '../../convex/_generated/api';
+import { useMutation, useQuery } from 'convex/react';
+function StarButton({snippetId}:{snippetId:Id<"snippets">}) {
       const {isSignedIn} = useAuth();
 
     const isStarred =useQuery(api.snippets.isSnippetsStarred,{snippetId});
-    const starCount = usseQuery(api.snippet.getSnippetStarCount, {snippetId})
+    const starCount = useQuery(api.snippets.getSnippetStarCount, {snippetId})
     const star = useMutation(api.snippets.starSnippet)
 
     const handleStar = async()=>{
