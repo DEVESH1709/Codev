@@ -1,6 +1,7 @@
 import { currentUser } from '@clerk/nextjs/server'
 import { ConvexHttpClient } from 'convex/browser';
 import React from 'react'
+import ProPlanView from './_components/ProPlanView';
 
 async function PricingPage() {
     const user= await currentUser();
@@ -12,7 +13,7 @@ async function PricingPage() {
     if(convexUser?.isPro) return <ProPlanView></ProPlanView>
   return (
     <div>
-      
+        
     </div>
   )
 }
