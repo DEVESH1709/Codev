@@ -1,8 +1,8 @@
 import { useQuery } from "convex/react"
 import { api } from "../../../../convex/_generated/api"
 import {motion} from "framer-motion"
-import {Activity,Code2,Star,Timer,TrendingUp,Trophy,Zap} from "lucide-react"
-
+import {Activity,Code2,Star,Timer,TrendingUp,Trophy,UserIcon,Zap} from "lucide-react"
+import {Id} from "../../../../convex/_generated/dataModel"
 import {UserResource} from "@clerk/types"
 
 interface ProfileHeaderProps{

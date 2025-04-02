@@ -1,4 +1,7 @@
 import React from 'react'
+import CommentContent from './CommentContent';
+import { Trash2Icon, UserIcon } from 'lucide-react';
+import { Id } from '../../../../../convex/_generated/dataModel';
 
 interface CommentProps{
     comment:{
@@ -10,9 +13,9 @@ interface CommentProps{
         content:string;
     };
 
-    onDelete:(commentId:Id<"snippettComments">)=> void;
+    onDelete:(commentId:Id<"snippetComments">)=> void;
         isDeleting :boolean;
-        currentUserrId?:string;
+        currentUserId?:string;
     
 }
 

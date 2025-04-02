@@ -5,11 +5,12 @@ import { useUser } from "@clerk/nextjs"
 import { useMutation } from "convex/react";
 import toast from "react-hot-toast";
 import StarButton from "@/components/StarButton";
-import { Clock,Trash2 } from "lucide-react";
+import { Clock,Trash2, User } from "lucide-react";
 import { api } from "../../../../convex/_generated/api";
 import Link from "next/link";
 import {motion} from "framer-motion"
-import { deleteSnippet } from "../../../../convex/snippets";
+import { useState } from "react";
+import Image from "next/image";
 
 function SnippetCard({snippet}:{snippet:Snippet}){
   const {user}=useUser();
