@@ -1,4 +1,6 @@
 import { useState } from "react";
+import CommentContent from "./CommentContent";
+import { CodeIcon, SendIcon } from "lucide-react";
 
 interface CommentFormProps{
     onSubmit:(comment:string) =>Promise<void>;
@@ -19,7 +21,7 @@ interface CommentFormProps{
       e.currentTarget.selectionStart = e.currentTarget.selectionEnd = start + 2;
     }
   };
-  const handleSubmit =()=>{
+  const handleSubmit =async (e: React.FormEvent)=>{
     e.preventDefault();
     if(!comment.trim()) return ;
 
