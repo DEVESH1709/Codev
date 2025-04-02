@@ -2,7 +2,8 @@ import { httpAction } from './_generated/server';
 import {httpRouter} from "convex/server"
 import { WebhookEvent } from '@clerk/nextjs/server';
 import { Webhook } from 'svix';
-import {api, internal} from "./_generated/api"
+import {api, internal} from "./_generated/api";
+
 const http= httpRouter();
 
 http.route({
@@ -16,9 +17,9 @@ http.route({
     return new Response("Missing X-Signature header",{status:400})
   }
   try{
-    const payload =await ctx.runAction(internal.lemonSqueezy.verifyWebhook,{
-      payload:payloadString,
-      signature
+    const payload = await ctx.runAction(internal.lemonSqueezy.verifyWebhook, {
+      payload: payloadString,
+      signature,
     })
    if(payload.meta.event_name==="order_created"){
     const {data} =payload
