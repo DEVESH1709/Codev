@@ -8,6 +8,7 @@ import { SignedIn, SignedOut } from '@clerk/nextjs';
 import FeatureItem from './_components/FeatureItem';
 import { ENTERPRISE_FEATURES, FEATURES } from './_constant';
 import { Star } from 'lucide-react';
+import { api } from '../../../convex/_generated/api';
 
 async function PricingPage() {
     const user= await currentUser();
