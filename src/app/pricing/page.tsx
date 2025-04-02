@@ -9,6 +9,8 @@ import FeatureItem from './_components/FeatureItem';
 import { ENTERPRISE_FEATURES, FEATURES } from './_constant';
 import { Star } from 'lucide-react';
 import { api } from '../../../convex/_generated/api';
+import LoginButton from './_components/LoginButton';
+import UpgradeButton from './_components/UpgradeButton';
 
 async function PricingPage() {
     const user= await currentUser();
