@@ -16,9 +16,21 @@ http.route({
     return new Response("Missing X-Signature header",{status:400})
   }
   try{
-    const payload =await ctx.runAction(internal.lemonSqueezy.verifyWebhook);
-    payload:payloadString,
-    signature
+    const payload =await ctx.runAction(internal.lemonSqueezy.verifyWebhook,{
+      payload:payloadString,
+      signature
+    })
+   if(payload.meta.event_name==="order.created"){
+    const {data} =payload
+
+    await ctx.runMutation(api.users.upgradeToPro,{
+      email:data.attributes.use_email,
+      lemonSqueezyCustomerId: data.attributes.customer_id.toString(),
+      lemonSqueezyOrderId: data.id,
+      amount: data.attributes.total,
+    })
+   }
+  
   }
   catch(error){
 
