@@ -20,19 +20,26 @@ http.route({
       payload:payloadString,
       signature
     })
-   if(payload.meta.event_name==="order.created"){
+   if(payload.meta.event_name==="order_created"){
     const {data} =payload
 
-    await ctx.runMutation(api.users.upgradeToPro,{
+  const {success}=  await ctx.runMutation(api.users.upgradeToPro,{
       email:data.attributes.use_email,
       lemonSqueezyCustomerId: data.attributes.customer_id.toString(),
       lemonSqueezyOrderId: data.id,
       amount: data.attributes.total,
     })
+
+    if(success){
+        //todo
+    }
    }
-  
+  return new Response ("Webhook processed successfully",{status:200})
   }
+
   catch(error){
+    console.log("Webhook error:",error)
+    return new Response("Error processing webhook", {status:500})
 
   }
 })
