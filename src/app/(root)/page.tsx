@@ -1,7 +1,7 @@
-import Image from "next/image";
+import OutputPanel from "./_components/OutputPanel";
 import Header from "./_components/Header"
-import Editor from "./_components/EditorPanel"
-import Footer from "./_components/Footer"
+import EditorPanel from "./_components/EditorPanel"
+
 export default function Home() {
   return (
   <div className="min-h-screen">
