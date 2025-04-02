@@ -1,17 +1,19 @@
 "use client"
 import { useCodeEditorStore } from "@/store/useCodeEditorStore";
 import { useState,useEffect } from "react";
-import { LANGUAGE_CONFIG } from "../_constants";
+import { defineMonacoThemes, LANGUAGE_CONFIG } from "../_constants";
 import {motion} from "framer-motion"
 import Image from "next/image";
 import {RotateCcwIcon, ShareIcon, TypeIcon} from "lucide-react";
 import { useClerk } from "@clerk/nextjs";
 import { EditorPanelSkeleton ,EditorViewSkeleton} from "./EditorPanelSkeleton";
 import useMounted from "@/hooks/useMounted";
+import ShareSnippetDialog from "./ShareSnippetDialog";
+import { Editor } from "@monaco-editor/react";
 
 function EditorPanel(){
     const clerk= useClerk();
-const [isShareDialogOpen,setShareDialogOpen] =useState(false);
+const [isShareDialogOpen,setIsShareDialogOpen] =useState(false);
 const {language,theme,fontSize,editor,setFontSize,setEditor}= useCodeEditorStore();
 
  const mounted =useMounted()
