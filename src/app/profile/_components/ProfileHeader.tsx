@@ -26,7 +26,7 @@ interface ProfileHeaderProps{
         email: string;
         isPro: boolean;
     },
-    user:UserResource,
+    user:UserResource ,
 }
 
 function ProfileHeader({userStats,userData,user}:ProfileHeaderProps) {
