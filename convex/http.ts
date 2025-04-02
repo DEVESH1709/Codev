@@ -16,7 +16,9 @@ http.route({
     return new Response("Missing X-Signature header",{status:400})
   }
   try{
-   const payload =await ctx.runAction(internal.lemonSqueezy.verifyWebhook);
+    const payload =await ctx.runAction(internal.lemonSqueezy.verifyWebhook);
+    payload:payloadString,
+    signature
   }
   catch(error){
 
