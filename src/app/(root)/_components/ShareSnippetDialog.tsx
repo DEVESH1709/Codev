@@ -10,7 +10,7 @@ function ShareSnippetDialog({onClose}:{onClose:()=>void }) {
   const [isSharing,setIsSharing] =useState(false);
   const [language,getCode ]= useCodeEditorStore();
   const createSnippets = useMutation(api.snippets.createSnippet)
-
+  
  const handleShare =async (e:React.FormEvent)=>{
   e.preventDefault();
 
