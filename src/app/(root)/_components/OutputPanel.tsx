@@ -5,14 +5,14 @@ import { useState } from "react";
 import { AlertTriangle, CheckCircle,Clock,Copy,Terminal } from "lucide-react";
 import RunningCodeSkeleton from "./RunningCodeSkeleton";
 function OutputPanel(){
-  const [output,error,isRunning ]= useCodeEditorStore();
+  const {output,error,isRunning }= useCodeEditorStore();
   const [isCopied,setIsCopied]= useState(false)
 
   const hasContent =error || output
 
   const handleCopy = async ()=>{
-    if(!hasContent()) return 
-    await navigator.clipboard.write(error || output)
+    if(!hasContent) return 
+    await navigator.clipboard.writeText(error || output)
     setIsCopied(true)
 
     setTimeout(()=>{
