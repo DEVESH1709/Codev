@@ -23,6 +23,6 @@ export const verifyWebhook =internalAction({
             throw new Error ("Invalid signature");
         }
         return JSON.parse(args.payload)
-    }
+    },
 
-})
+});
