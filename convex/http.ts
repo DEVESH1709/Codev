@@ -20,9 +20,9 @@ http.route({
     const payload = await ctx.runAction(internal.lemonSqueezy.verifyWebhook, {
       payload: payloadString,
       signature,
-    })
+    });
    if(payload.meta.event_name==="order_created"){
-    const {data} =payload
+    const {data} =payload;
 
   const {success}=  await ctx.runMutation(api.users.upgradeToPro,{
       email:data.attributes.use_email,

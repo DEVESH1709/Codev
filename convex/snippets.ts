@@ -19,7 +19,7 @@ handler: async (ctx,args)=>{
     .filter((q)=>q.eq(q.field("userId"), identity.subject))
     .first();
 
-    if(!!user){
+    if(!user){
         throw new Error("User not found");
 
     }
@@ -86,7 +86,7 @@ export const starSnippet =mutation({
    
         const existing =await ctx.db
         .query("stars")
-        .withIndex("by_user_id_and-snippet_id")
+        .withIndex("by_user_id_and_snippet_id")
         .filter((q) => q.eq(q.field("userId"), identity.subject) && q.eq(q.field("snippetId"),args.snippetId)
     )
     .first();
