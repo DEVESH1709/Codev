@@ -21,7 +21,7 @@ async function Header() {
 
 
 
-    return <div className="relative z-10">
+    return (<div className="relative z-10">
         <div className="flex items-center lg:justify-between justify-center bg-[#0a0a0f]/80 backdrop-blur-xl p-6 mb-4 rounded-lg">
 <div className="hidden lg:flex items-center gap-8">
 <Link href="/" className="flex items-center gap-3 group relative">
@@ -97,6 +97,6 @@ async function Header() {
        
     </div>
 
-    
+      )
 }
 export default Header
