@@ -8,10 +8,10 @@ import { useMutation, useQuery } from "convex/react";
 import { MessageSquare } from "lucide-react";
 import CommentForm from "./CommentForm";
 
-function Comments({snippetId}:{anippetsId:Id<"snippets">}){
+function Comments({snippetId}:{snippetId:Id<"snippets">}){
     const user =useUser();
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [deleteCommentId,setDeleteCommentId] =useState<string |null>(null);
+    const [deletinCommentId,setDeleteCommentId] =useState<string |null>(null);
     
     const comments =useQuery(api.snippets.getComments,{snippetId}) || [];
     const addComment = useMutation (api.snippets.addComment);

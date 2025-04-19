@@ -40,8 +40,8 @@ export const getUser= query({
 
       if(!user) return null;
       return user;
-    }
-})
+    },
+});
 
 
 export const upgradeToPro= mutation({

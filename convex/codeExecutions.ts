@@ -31,8 +31,8 @@ export const saveExecution= mutation({
 
 
 
-    }
-})
+    },
+});
 
 export const getUserExecutions = query({
     args :{

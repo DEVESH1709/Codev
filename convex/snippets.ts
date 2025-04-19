@@ -2,7 +2,7 @@
 import { mutation,query } from "./_generated/server";
 import {v} from "convex/values"
 
-export const createSnippets =mutation({
+export const createSnippet =mutation({
 args:{
     title:v.string(),
     language :v.string(),
@@ -222,7 +222,7 @@ export const getSnippetsStarCount= query({
 
 
 
-export const getstarredSnippets = query({
+export const getStarredSnippets = query({
     handler: async (ctx)=>{
         const identity = await ctx.auth.getUserIdentity();
 
