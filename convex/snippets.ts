@@ -152,7 +152,7 @@ export const addComment = mutation({
 
 export const getSnippets= query({
     handler:async(ctx)=>{
-        const snippets =await ctx.db.query("snippets").order("desc");
+        const snippets =await ctx.db.query("snippets").order("desc").collect();
         return snippets;
 
     }
