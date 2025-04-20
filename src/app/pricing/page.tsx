@@ -15,7 +15,7 @@ import UpgradeButton from './_components/UpgradeButton';
 async function PricingPage() {
     const user= await currentUser();
     const convex =new ConvexHttpClient(process.env.NEXT_PUBLIC_COVEX_URL!);
-    const convexUser =await convex.query(api.user.getUser,{
+    const convexUser =await convex.query(api.users.getUser,{
         userId:user?.id || ""
     })
 
