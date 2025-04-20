@@ -19,18 +19,18 @@ handler: async (ctx,args)=>{
     .filter((q)=>q.eq(q.field("userId"), identity.subject))
     .first();
 
-    if(!user){
-        throw new Error("User not found");
+    if(!user) throw new Error("User not found");
 
-    }
+    
 
-    const sanippets =await ctx.db.insert("snippets",{
+    const snippetId =await ctx.db.insert("snippets",{
         userId:identity.subject,
        userName:user.name,
        title:args.title,
        language:args.language,
        code:args.code
-    })
+    });
+    return snippetId;
 },
 });
 
@@ -217,8 +217,8 @@ export const getSnippetStarCount= query({
        .collect();
 
        return stars.length;
-    }
-})
+    },
+});
 
 
 
