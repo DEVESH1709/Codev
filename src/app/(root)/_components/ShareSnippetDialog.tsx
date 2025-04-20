@@ -32,7 +32,7 @@ toast.error("Error creating snippets")
   }
  }
     return (
-    <div className=' fixed inset-0 bg-black/50 flex items-center justify-center z-50"'> 
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"> 
       
 
       <div className="bg-[#1e1e2e] rounded-lg p-6 w-full max-w-md">
