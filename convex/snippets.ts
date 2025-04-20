@@ -206,17 +206,17 @@ export const isSnippetStarred = query({
 
 
 
-export const getSnippetsStarCount= query({
+export const getSnippetStarCount= query({
 
-    args:{snippetsId:v.id("snippets")},
+    args:{snippetId:v.id("snippets")},
     handler:async(ctx,args)=>{
-        const star =await ctx.db
+        const stars =await ctx.db
         .query("stars")
         .withIndex("by_snippet_id")
-        .filter((q)=>q.eq(q.field("snippetId"),args.snippetsId))
+        .filter((q)=>q.eq(q.field("snippetId"),args.snippetId))
        .collect();
 
-       return star.length;
+       return stars.length;
     }
 })
 
