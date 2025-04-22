@@ -115,7 +115,7 @@ async function PricingPage() {
                     </span>
                     <span className="text-xl text-gray-400">one-time</span>
                   </div>
-                  <p className="text-gray-400 text-lg">Unlock the full potential of CodeCraft</p>
+                  <p className="text-gray-400 text-lg">Unlock the full potential of Codev</p>
                 </div>
 
                 <div className="grid md:grid-cols-3 gap-12 mb-12">
