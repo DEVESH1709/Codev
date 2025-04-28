@@ -15,14 +15,13 @@ import Image from "next/image";
 function SnippetCard({snippet}:{snippet:Snippet}){
   const {user}=useUser();
 
-
    const deleteSnippet =useMutation(api.snippets.deleteSnippet)
   const [isDeleting,setIsDeleting] =useState(false);
   
   const handleDelete =async()=>{
   setIsDeleting(true);
   try{
-await deleteSnippet({snippetId : snippet._id})
+await deleteSnippet({snippetId : snippet._id});
   }
   catch(error){
     console.error("Error deleting snippet:",error);

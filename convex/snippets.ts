@@ -49,7 +49,7 @@ export const deleteSnippet =mutation({
         if(snippet.userId!==identity.subject){
             throw new Error("You don't have permission to delete this snippet");
         }
-        await ctx.db.delete(args.snippetId);
+       
 
         const comments = await ctx.db
       .query("snippetComments")
