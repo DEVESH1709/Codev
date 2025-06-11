@@ -85,7 +85,7 @@ async function Header() {
           </SignedIn>
   
           {/* Profile */}
-          <div className="pl-3 border-l border-gray-800">
+            <div className="pl-3 border-l border-gray-800">
             <HeaderProfileBtn />
           </div>
         </div>
