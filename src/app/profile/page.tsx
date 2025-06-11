@@ -166,14 +166,22 @@ function ProfilePage() {
 
                         {(execution.output || execution.error) && (
                           <div className="mt-4 p-4 rounded-lg bg-black/40">
-                            <h4 className="text-sm font-medium text-gray-400 mb-2">Output</h4>
-                            <pre
+                            <h4 className="text-sm font-medium text-gray-400 mb-2 relative">Output</h4>
+                            {/* <pre
                               className={`text-sm ${
                                 execution.error ? "text-red-400" : "text-green-400"
                               }`}
                             >
                               {execution.error || execution.output}
-                            </pre>
+                            </pre> */}
+                            <pre
+  className={`text-sm whitespace-pre-wrap break-words max-w-full overflow-auto ${
+    execution.error ? "text-red-400" : "text-green-400"
+  }`}
+>
+  {execution.error || execution.output}
+</pre>
+
                           </div>
                         )}
                       </div>
