@@ -1,36 +1,98 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+#  Codev: Interactive Code Editor
 
-## Getting Started
+Welcome to **Codev** — a collaborative, interactive code editor built with Next.js! Effortlessly write, run, and share code snippets in multiple languages, all in a beautiful, modern UI.
 
-First, run the development server:
+![Codev Screenshot](public/screenshot-for-readme.png)
 
-```bash
-npm run dev
-# or
+---
+
+##  Features
+
+-  **Multi-language Support**: Write and run code in Python, JavaScript, C++, Java, Go, Rust, and more!
+-  **Theme Switcher**: Toggle between light and dark modes for your preferred coding experience.
+-  **User Profiles**: Sign in, save your snippets, and manage your code library.
+-  **Shareable Snippets**: Instantly share code with friends or colleagues via unique links.
+-  **Persistent Storage**: Your code is safe—snippets are stored and retrievable anytime.
+-  **Fast & Responsive**: Optimized for all devices, from mobile to desktop.
+-  **Authentication**: Secure sign-in with Clerk integration.
+-  **Pro Features**: Unlock advanced capabilities with a Pro plan (see [Pricing](#-pro-plan)).
+
+---
+
+##  Quick Start
+
+1. **Clone the repo:**
+   ```bash
+   git clone https://github.com/your-username/codev.git
+   cd codev
+   ```
+2. **Install dependencies:**
+   ```bash
+   npm install
+   # or
+yarn install
+   ```
+3. **Run the development server:**
+   ```bash
+   npm run dev
+   # or
 yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+   ```
+4. **Open your browser:**
+   Visit [http://localhost:3000](http://localhost:3000)
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+##  Usage
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- **Edit code:** Use the main editor panel to write or paste your code.
+- **Select language:** Choose your language from the dropdown.
+- **Run code:** Click the ▶️ Run button to execute and see output instantly.
+- **Save snippet:** Save your code to your profile for later.
+- **Share:** Use the share button to copy a link to your snippet.
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
+##  Tech Stack
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- **Framework:** [Next.js](https://nextjs.org/)
+- **Editor:** [Monaco Editor](https://microsoft.github.io/monaco-editor/)
+- **UI:** [Tailwind CSS](https://tailwindcss.com/), [Lucide Icons](https://lucide.dev/)
+- **Auth:** [Clerk](https://clerk.com/)
+- **State:** [Zustand](https://zustand-demo.pmnd.rs/)
+- **Backend:** [Convex](https://convex.dev/) (for real-time data & storage)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+##  Pro Plan
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Unlock advanced features with Codev Pro:
+- Unlimited snippet storage
+- Priority code execution
+- Early access to new languages
+- And more!
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+See [Pricing](http://localhost:3000/pricing) for details.
+
+---
+
+##  Contributing
+
+We welcome contributions! To get started:
+1. Fork this repo
+2. Create a new branch (`git checkout -b feature/your-feature`)
+3. Commit your changes
+4. Push to your fork and open a Pull Request
+
+Please see [CONTRIBUTING.md](CONTRIBUTING.md) for more details.
+
+---
+
+##  Resources & Credits
+- [Next.js Documentation](https://nextjs.org/docs)
+- [Monaco Editor](https://microsoft.github.io/monaco-editor/)
+- [Clerk Auth](https://clerk.com/docs)
+- [Convex](https://docs.convex.dev/)
+
+---
+
