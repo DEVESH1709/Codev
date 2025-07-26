@@ -2,7 +2,6 @@
 
 Welcome to **Codev** — a collaborative, interactive code editor built with Next.js! Effortlessly write, run, and share code snippets in multiple languages, all in a beautiful, modern UI.
 
-![Codev Screenshot](public/screenshot-for-readme.png)
 
 ---
 
