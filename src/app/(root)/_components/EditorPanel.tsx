@@ -48,8 +48,8 @@ function EditorPanel() {
   if (!mounted) return null;
 
   return (
-    <div className="relative px-2 sm:px-4 md:px-6">
-      <div className="relative bg-[#12121a]/90 backdrop-blur rounded-xl border border-white/[0.05] p-4 sm:p-5 md:p-6">
+    <div className="relative px-2 md:px-6">
+      <div className="relative bg-[#12121a]/90 backdrop-blur rounded-xl border border-white/[0.05] p-4 md:p-6">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
           <div className="flex items-center gap-3">
