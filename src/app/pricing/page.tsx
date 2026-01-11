@@ -19,7 +19,7 @@ async function PricingPage() {
         userId:user?.id || ""
     })
 
-    if(convexUser?.isPro) return <ProPlanView></ProPlanView>
+    if(convexUser?.isPro) return <ProPlanView/>
   return (
     <div className='relative min-h-screen bg-[#0a0a0f] selection:bg-blue-500/20 selection:text-blue-200'>
         <NavigationHeader></NavigationHeader>
