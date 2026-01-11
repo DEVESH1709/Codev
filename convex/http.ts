@@ -25,7 +25,7 @@ http.route({
     const {data} =payload;
 
   const {success}=  await ctx.runMutation(api.users.upgradeToPro,{
-      email:data.attributes.use_email,
+      email:data.attributes.user_email,
       lemonSqueezyCustomerId: data.attributes.customer_id.toString(),
       lemonSqueezyOrderId: data.id,
       amount: data.attributes.total,

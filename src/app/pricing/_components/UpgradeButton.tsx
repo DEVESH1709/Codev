@@ -2,7 +2,9 @@ import { Zap } from "lucide-react";
 import Link from "next/link"
 
 export default function UpgradeButton(){
-    const CHECKOUT_URL = "https://codev-store.lemonsqueezy.com/buy/3d2749b1-db03-4de2-b449-b1a304e40715"
+    const CHECKOUT_URL =
+    "https://dev-store.lemonsqueezy.com/buy/721ef11d-51e6-4149-96ec-70903f273ecf";
+    // const CHECKOUT_URL = "https://codev-store.lemonsqueezy.com/buy/3d2749b1-db03-4de2-b449-b1a304e40715"
     return(
         <Link
            href={ CHECKOUT_URL}
