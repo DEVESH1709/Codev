@@ -5,35 +5,35 @@ import { X } from 'lucide-react';
 import { useMutation } from 'convex/react';
 import toast from 'react-hot-toast';
 import { api } from '../../../../convex/_generated/api';
-function ShareSnippetDialog({onClose}:{onClose:()=>void }) {
-  const [title, setTitle] =useState("");
-  const [isSharing,setIsSharing] =useState(false);
-  const {language,getCode}= useCodeEditorStore();
+function ShareSnippetDialog({ onClose }: { onClose: () => void }) {
+  const [title, setTitle] = useState("");
+  const [isSharing, setIsSharing] = useState(false);
+  const { language, getCode } = useCodeEditorStore();
   const createSnippet = useMutation(api.snippets.createSnippet);
-  
- const handleShare =async (e:React.FormEvent)=>{
-  e.preventDefault();
 
-  setIsSharing(true);
-  try{
-    const code =getCode();
-    await createSnippet({title, language,code});
-    onClose();
-    setTitle("");
-    toast.success("Snippert shared successfully");
-    
-    
+  const handleShare = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    setIsSharing(true);
+    try {
+      const code = getCode();
+      await createSnippet({ title, language, code });
+      onClose();
+      setTitle("");
+      toast.success("Snippert shared successfully");
+
+
+    }
+    catch (error) {
+      console.log("Error creating snippet:", error);
+      toast.error("Error creating snippets")
+    } finally {
+      setIsSharing(false);
+    }
   }
-  catch(error){
-console.log("Error creating snippet:",error);
-toast.error("Error creating snippets")
-  }finally{
-    setIsSharing(false);
-  }
- }
-    return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"> 
-      
+  return (
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4">
+
 
       <div className="bg-[#1e1e2e] rounded-lg p-6 w-full max-w-md">
         <div className="flex items-center justify-between mb-4">
@@ -43,8 +43,8 @@ toast.error("Error creating snippets")
           </button>
         </div>
 
-        <form onSubmit = {handleShare}>
-        <div className="mb-4">
+        <form onSubmit={handleShare}>
+          <div className="mb-4">
             <label htmlFor="title" className="block text-sm font-medium text-gray-400 mb-2">
               Title
             </label>
@@ -60,7 +60,7 @@ toast.error("Error creating snippets")
           </div>
 
           <div className='flex justify-end gap-3'>
-          <button
+            <button
               type="button"
               onClick={onClose}
               className="px-4 py-2 text-gray-400 hover:text-gray-300"
@@ -78,7 +78,7 @@ toast.error("Error creating snippets")
           </div>
 
         </form>
-        </div>
+      </div>
     </div>
   )
 }

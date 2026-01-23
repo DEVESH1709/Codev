@@ -48,7 +48,7 @@ function EditorPanel() {
   if (!mounted) return null;
 
   return (
-    <div className="relative px-2 md:px-6">
+    <div className="relative">
       <div className="relative bg-[#12121a]/90 backdrop-blur rounded-xl border border-white/[0.05] p-4 md:p-6">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
@@ -58,7 +58,7 @@ function EditorPanel() {
             </div>
             <div>
               <h2 className="text-sm font-medium text-white">Code Editor</h2>
-              <p className="text-xs text-gray-500">Write and execute your code</p>
+              <p className="text-xs text-gray-500 hidden md:block">Write and execute your code</p>
             </div>
           </div>
 
@@ -101,7 +101,7 @@ function EditorPanel() {
               from-blue-500 to-blue-600 opacity-90 hover:opacity-100 transition-opacity"
             >
               <ShareIcon className="size-4 text-white" />
-              <span className="text-sm font-medium text-white">Share</span>
+              <span className="text-sm font-medium text-white hidden md:block">Share</span>
             </motion.button>
           </div>
         </div>

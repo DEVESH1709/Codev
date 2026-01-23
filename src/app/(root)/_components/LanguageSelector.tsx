@@ -63,7 +63,7 @@ function LanguageSelector({ hasAccess }: { hasAccess: boolean }) {
           />
         </div>
 
-        <span className="text-gray-200 min-w-[80px] text-left group-hover:text-white transition-colors">
+        <span className="text-gray-200 min-w-[80px] text-left group-hover:text-white transition-colors hidden md:block">
           {currentLanguageObj.label}
         </span>
 
@@ -80,14 +80,19 @@ function LanguageSelector({ hasAccess }: { hasAccess: boolean }) {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 8, scale: 0.96 }}
             transition={{ duration: 0.2 }}
-            className="absolute top-full left-0 mt-2 w-64 bg-[#1e1e2e]/95 backdrop-blur-xl
+            className="absolute top-full right-0 mt-2 w-56 md:w-64 bg-[#1e1e2e]/95 backdrop-blur-xl
            rounded-xl border border-[#313244] shadow-2xl py-2 z-50"
           >
             <div className="px-3 pb-2 mb-2 border-b border-gray-800/50">
               <p className="text-xs font-medium text-gray-400">Select Language</p>
             </div>
 
-            <div className="max-h-[280px] overflow-y-auto overflow-x-hidden">
+            <div className="max-h-[280px] overflow-y-auto overflow-x-hidden pr-2
+              [&::-webkit-scrollbar]:w-2
+              [&::-webkit-scrollbar-track]:bg-transparent
+              [&::-webkit-scrollbar-thumb]:bg-gray-800
+              [&::-webkit-scrollbar-thumb]:rounded-full
+              [&::-webkit-scrollbar-thumb]:hover:bg-gray-700">
               {Object.values(LANGUAGE_CONFIG).map((lang, index) => {
                 const isLocked = !hasAccess && lang.id !== "javascript";
 
