@@ -10,18 +10,21 @@ import { EditorPanelSkeleton } from "./EditorPanelSkeleton";
 import useMounted from "@/hooks/useMounted";
 import ShareSnippetDialog from "./ShareSnippetDialog";
 import { Editor } from "@monaco-editor/react";
+import LogicVisualizer from "./LogicVisualiser";
 
 function EditorPanel() {
   const clerk = useClerk();
   const [isShareDialogOpen, setIsShareDialogOpen] = useState(false);
+  const [isDiagramOpen, setIsDiagramOpen] = useState(false);
   const { language, theme, fontSize, editor, setFontSize, setEditor } = useCodeEditorStore();
-
+  const [currentCode,setCurrentCode] = useState("");
   const mounted = useMounted();
 
   useEffect(() => {
     const savedCode = localStorage.getItem(`editor-code-${language}`);
     const newCode = savedCode || LANGUAGE_CONFIG[language].defaultCode;
     if (editor) editor.setValue(newCode);
+    setCurrentCode(newCode);
   }, [language, editor]);
 
   useEffect(() => {
@@ -33,10 +36,15 @@ function EditorPanel() {
     const defaultCode = LANGUAGE_CONFIG[language].defaultCode;
     if (editor) editor.setValue(defaultCode);
     localStorage.removeItem(`editor-code-${language}`);
+    setCurrentCode(defaultCode);
   };
 
   const handleEditorChange = (value: string | undefined) => {
-    if (value) localStorage.setItem(`editor-code-${language}`, value);
+    // if (value) localStorage.setItem(`editor-code-${language}`, value);
+   if(typeof value =="string"){
+    localStorage.setItem(`editor-code ${language}`, value);
+    setCurrentCode(value);
+   }
   };
 
   const handleFontSizeChange = (newSize: number) => {
@@ -92,6 +100,22 @@ function EditorPanel() {
               <RotateCcwIcon className="size-4 text-gray-400" />
             </motion.button>
 
+           { clerk.user&&<motion.button
+             whileHover = {{scale :1.02}}
+             whileTap={{ scale: 0.98 }}
+              onClick={() => setIsDiagramOpen(!isDiagramOpen)}
+              className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg overflow-hidden transition-all
+                ${isDiagramOpen
+                  ? "bg-blue-500/20 ring-1 ring-blue-500/50 text-blue-400"
+                  : "bg-[#1e1e2e] hover:bg-[#2a2a3a] ring-1 ring-white/5 text-gray-400"
+                }`}
+            >
+              <svg className="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+              </svg>
+              <span className="text-sm font-medium">Visual</span>
+            </motion.button>}
+
             {/* Share Button */}
             {clerk.user && (
               <motion.button
@@ -109,8 +133,9 @@ function EditorPanel() {
         </div>
 
         {/* Editor */}
+          <div className={`grid gap-4 ${isDiagramOpen ? "grid-cols-2" : "grid-cols-1"}`}>
         <div className="relative group rounded-xl overflow-hidden ring-1 ring-white/[0.05]">
-          {clerk.loaded ? (
+          {clerk.loaded && (
             <Editor
               height="600px"
               language={LANGUAGE_CONFIG[language].monacoLanguage}
@@ -140,11 +165,21 @@ function EditorPanel() {
                 },
               }}
             />
-          ) : (
-            <EditorPanelSkeleton />
+          )
+        }
+         {!clerk.loaded && <EditorPanelSkeleton />}
+          </div>
+
+          {/* Logic Visualizer Panel */}
+          {isDiagramOpen && (
+            <LogicVisualizer
+              language={language}
+              code={currentCode}
+            />
           )}
         </div>
       </div>
+
 
       {isShareDialogOpen && <ShareSnippetDialog onClose={() => setIsShareDialogOpen(false)} />}
     </div>
