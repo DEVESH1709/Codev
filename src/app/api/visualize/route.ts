@@ -1,4 +1,5 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { createGoogleGenerativeAI } from "@ai-sdk/google";
+import { generateText } from "ai";
 import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
@@ -11,20 +12,61 @@ export async function POST(req: Request) {
         }
 
 
-        const genAI = new GoogleGenerativeAI(apiKey);
-        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+        const google =  createGoogleGenerativeAI({apiKey});
+      
 
-        const prompt = `You are a Logic Visualizer. Convert the user's code into a Mermaid.js 'graph TD' (flowchart). Focus on Control Flow (If/Else/Loops). Return ONLY the raw mermaid string. Do not use markdown blocks. \n\nCode:\n${code}`;
+        const prompt = `
+          You are an Algorithm Visualizer Engine.
+          Simulate the execution of the provided code step-by-step.
+          
+          Return a STRICT VALID JSON object with this structure:
+          {
+            "complexity": {
+              "time": "O(...)", 
+              "space": "O(...)",
+              "explanation": "Brief reason..."
+            },
+            "trace": [
+              {
+                "id": 1,
+                "line": <line_number>,
+                "action": "Init / Compare / Swap / Update",
+                "variables": { "varName": value, "arrName": [values...] },
+                "highlightIndices": [index1, index2] (if working on array),
+                "description": "Explaining what happened this step"
+              }
+            ]
+          }
 
-        const result = await model.generateContent(prompt);
-        const response = await result.response;
-        const text = response.text();
+          Rules:
+          1. Focus on tracking changes to Arrays/Vectors and key variables.
+          2. 'highlightIndices' should contain indices being compared or swapped.
+          3. Generate enough steps to demonstrate the algorithm (at least 5-10 steps).
+          4. Return ONLY raw JSON. No markdown formatting.
+          5. **CRITICAL:** Do NOT return an empty trace. If the code is simple, show initialization steps.
+          6. Support C++, Python, JavaScript/TS syntax.
 
-        // Clean up markdown code blocks if any (model might still output them)
-        const cleanText = text.replace(/```mermaid/g, "").replace(/```/g, "").trim();
+          Code to visualize:
+          ${code}
+        `;
+        const { text } = await generateText({
+      model: google("gemini-3-flash-preview"),
+      prompt: prompt,
+    });
+          
+    const cleanText = text.replace(/```json/g, "").replace(/```/g, "").trim();
 
-        return NextResponse.json({ chart: cleanText });
-    } catch (error: any) {
+     let data;
+    try {
+      data = JSON.parse(cleanText);
+    } catch (e) {
+      console.error("Failed to parse AI JSON:", cleanText);
+      return NextResponse.json({ error: "Failed to parse visualization data" }, { status: 500 });
+    }
+        
+        return NextResponse.json(data);
+      
+}catch (error: any) {
         // Log detailed error for debugging
         console.warn("⚠️  Gemini API Failed - Using Offline Mode");
         console.warn("Error Details:", error.message || error);
