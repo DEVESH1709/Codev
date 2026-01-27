@@ -5,6 +5,9 @@ import { NextResponse } from "next/server";
 export async function POST(req: Request) {
   try {
     const { code } = await req.json();
+    if (!code) {
+      return NextResponse.json({ error: "Missing `code` in request body" }, { status: 400 });
+    }
     const apiKey = process.env.GEMINI_API_KEY;
 
     if (!apiKey) {
@@ -82,7 +85,10 @@ export async function POST(req: Request) {
       data = JSON.parse(cleanText);
     } catch (e) {
       console.error("Failed to parse AI JSON:", cleanText);
-      return NextResponse.json({ error: "Failed to parse visualization data" }, { status: 500 });
+      const debug = process.env.NODE_ENV !== "production";
+      const body: any = { error: "Failed to parse visualization data" };
+      if (debug) body.raw = cleanText;
+      return NextResponse.json(body, { status: 500 });
     }
 
     return NextResponse.json(data);
@@ -95,4 +101,8 @@ export async function POST(req: Request) {
     // Return error to frontend
     return NextResponse.json({ error: "AI Service Failed: " + (error.message || "Unknown error") }, { status: 500 });
   }
+}
+
+export async function GET() {
+  return NextResponse.json({ error: "Method GET not allowed. Use POST with JSON body { code }" }, { status: 405 });
 }
