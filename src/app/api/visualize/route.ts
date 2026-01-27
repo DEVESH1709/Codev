@@ -2,9 +2,8 @@ import { createGoogleGenerativeAI } from "@ai-sdk/google";
 import { generateText } from "ai";
 import { NextResponse } from "next/server";
 
-// Run this route on the Node.js runtime instead of Edge to avoid the 10s Edge timeout
-export const runtime = "nodejs";
-export const maxDuration = 60; // Allow execution up to 60 seconds
+// Run this route on the Edge runtime strictly to allow longer timeouts (up to 30s-60s on Vercel)
+export const runtime = "edge";
 
 export async function POST(req: Request) {
   try {
@@ -77,7 +76,7 @@ export async function POST(req: Request) {
 
 
     // Helper: call generateText with a timeout to ensure we don't hang indefinitely
-    const generateWithTimeout = async (opts: any, ms = 8000) => {
+    const generateWithTimeout = async (opts: any, ms = 30000) => {
       return await Promise.race([
         generateText(opts),
         new Promise((_, reject) => setTimeout(() => reject(new Error("AI request timed out")), ms)),
@@ -89,7 +88,7 @@ export async function POST(req: Request) {
       const res = await generateWithTimeout({
         model: google("gemini-3-flash-preview"),
         prompt: prompt,
-      }, 8000);
+      }, 30000);
       // generateText returns an object with `text`
       text = (res as any).text;
     } catch (err: any) {
