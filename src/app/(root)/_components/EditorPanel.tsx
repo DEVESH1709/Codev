@@ -17,7 +17,7 @@ function EditorPanel() {
   const [isShareDialogOpen, setIsShareDialogOpen] = useState(false);
   const [isDiagramOpen, setIsDiagramOpen] = useState(false);
   const { language, theme, fontSize, editor, setFontSize, setEditor } = useCodeEditorStore();
-  const [currentCode,setCurrentCode] = useState("");
+  const [currentCode, setCurrentCode] = useState("");
   const mounted = useMounted();
 
   useEffect(() => {
@@ -41,10 +41,10 @@ function EditorPanel() {
 
   const handleEditorChange = (value: string | undefined) => {
     // if (value) localStorage.setItem(`editor-code-${language}`, value);
-   if(typeof value =="string"){
-    localStorage.setItem(`editor-code ${language}`, value);
-    setCurrentCode(value);
-   }
+    if (typeof value == "string") {
+      localStorage.setItem(`editor-code ${language}`, value);
+      setCurrentCode(value);
+    }
   };
 
   const handleFontSizeChange = (newSize: number) => {
@@ -100,9 +100,9 @@ function EditorPanel() {
               <RotateCcwIcon className="size-4 text-gray-400" />
             </motion.button>
 
-           { clerk.user&&<motion.button
-             whileHover = {{scale :1.02}}
-             whileTap={{ scale: 0.98 }}
+            {clerk.user && <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
               onClick={() => setIsDiagramOpen(!isDiagramOpen)}
               className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg overflow-hidden transition-all
                 ${isDiagramOpen
@@ -133,49 +133,51 @@ function EditorPanel() {
         </div>
 
         {/* Editor */}
-          <div className={`grid gap-4 ${isDiagramOpen ? "grid-cols-2" : "grid-cols-1"}`}>
-        <div className="relative group rounded-xl overflow-hidden ring-1 ring-white/[0.05]">
-          {clerk.loaded && (
-            <Editor
-              height="600px"
-              language={LANGUAGE_CONFIG[language].monacoLanguage}
-              onChange={handleEditorChange}
-              theme={theme}
-              beforeMount={defineMonacoThemes}
-              onMount={(editor) => setEditor(editor)}
-              options={{
-                minimap: { enabled: false },
-                fontSize,
-                automaticLayout: true,
-                scrollBeyondLastLine: false,
-                padding: { top: 16, bottom: 16 },
-                renderWhitespace: "selection",
-                fontFamily: '"Fira Code", "Cascadia Code", Consolas, monospace',
-                fontLigatures: true,
-                cursorBlinking: "smooth",
-                smoothScrolling: true,
-                contextmenu: true,
-                renderLineHighlight: "all",
-                lineHeight: 1.6,
-                letterSpacing: 0.5,
-                roundedSelection: true,
-                scrollbar: {
-                  verticalScrollbarSize: 8,
-                  horizontalScrollbarSize: 8,
-                },
-              }}
-            />
-          )
-        }
-         {!clerk.loaded && <EditorPanelSkeleton />}
+        <div className={`grid gap-4 ${isDiagramOpen ? "grid-cols-2" : "grid-cols-1"}`}>
+          <div className="relative group rounded-xl overflow-hidden ring-1 ring-white/[0.05]">
+            {clerk.loaded && (
+              <Editor
+                height="600px"
+                language={LANGUAGE_CONFIG[language].monacoLanguage}
+                onChange={handleEditorChange}
+                theme={theme}
+                beforeMount={defineMonacoThemes}
+                onMount={(editor) => setEditor(editor)}
+                options={{
+                  minimap: { enabled: false },
+                  fontSize,
+                  automaticLayout: true,
+                  scrollBeyondLastLine: false,
+                  padding: { top: 16, bottom: 16 },
+                  renderWhitespace: "selection",
+                  fontFamily: '"Fira Code", "Cascadia Code", Consolas, monospace',
+                  fontLigatures: true,
+                  cursorBlinking: "smooth",
+                  smoothScrolling: true,
+                  contextmenu: true,
+                  renderLineHighlight: "all",
+                  lineHeight: 1.6,
+                  letterSpacing: 0.5,
+                  roundedSelection: true,
+                  scrollbar: {
+                    verticalScrollbarSize: 8,
+                    horizontalScrollbarSize: 8,
+                  },
+                }}
+              />
+            )
+            }
+            {!clerk.loaded && <EditorPanelSkeleton />}
           </div>
 
           {/* Logic Visualizer Panel */}
           {isDiagramOpen && (
-            <LogicVisualizer
-              language={language}
-              code={currentCode}
-            />
+            <div className="h-[600px]">
+              <LogicVisualizer
+                language={language}
+                code={currentCode}
+              />
+            </div>
           )}
         </div>
       </div>

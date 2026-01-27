@@ -1,7 +1,5 @@
-"use client"
-
 import { useRef, useState, useEffect } from "react";
-import { Loader2, Play, Pause, ChevronRight, ChevronLeft, RotateCcw, Network, ArrowRight } from "lucide-react";
+import { Loader2, Play, Pause, ChevronRight, ChevronLeft, RotateCcw, Network, ArrowRight, ZoomIn, ZoomOut, Maximize, Move } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface TraceStep {
@@ -38,6 +36,40 @@ export default function LogicVisualizer({ code, language }: LogicVisualizerProps
     const timerRef = useRef<NodeJS.Timeout | null>(null);
     const [pointerPosition, setPointerPosition] = useState<{ top: number; left: number } | null>(null);
     const containerRef = useRef<HTMLDivElement>(null);
+
+    // Pan & Zoom State
+    const [zoomLevel, setZoomLevel] = useState(1);
+    const [panOffset, setPanOffset] = useState({ x: 0, y: 0 });
+    const [isDragging, setIsDragging] = useState(false);
+    const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+
+    const handleMouseDown = (e: React.MouseEvent) => {
+        if (activeTab !== "flowchart") return;
+        setIsDragging(true);
+        setDragStart({ x: e.clientX - panOffset.x, y: e.clientY - panOffset.y });
+    };
+
+    const handleMouseMove = (e: React.MouseEvent) => {
+        if (isDragging && activeTab === "flowchart") {
+            setPanOffset({
+                x: e.clientX - dragStart.x,
+                y: e.clientY - dragStart.y
+            });
+        }
+    };
+
+    const handleMouseUp = () => setIsDragging(false);
+    const handleMouseLeave = () => setIsDragging(false);
+
+    const handleZoom = (delta: number) => {
+        setZoomLevel(prev => Math.min(Math.max(0.5, prev + delta), 3));
+    };
+
+    const resetView = () => {
+        setZoomLevel(1);
+        setPanOffset({ x: 0, y: 0 });
+    };
+
     // Handle Active Node Highlighting for SVG
     useEffect(() => {
         if (activeTab === "flowchart") {
@@ -59,15 +91,16 @@ export default function LogicVisualizer({ code, language }: LogicVisualizerProps
                         const nodeRect = node.getBoundingClientRect();
                         const containerRect = container.getBoundingClientRect();
 
-                        // Calculate position relative to container
-                        // Position arrow to the left of the node, centered vertically
-                        const relativeTop = nodeRect.top - containerRect.top + (nodeRect.height / 2);
-                        const relativeLeft = nodeRect.left - containerRect.left;
+                        // NOTE: Pointer position logic needs to account for Zoom/Pan if we want it to track strictly relative to screen
+                        // However, since the pointer is INSIDE the transformed container, we calculate relative to the NODE itself?
+                        // Actually, simplified: we put the pointer INSIDE the SVG container so it scales WITH the SVG.
+                        // But finding the position relative to the UNTRANSFORMED SVG is hard purely from clientRects if transformed.
+                        // For now, let's keep the pointer login simple or disable it if it breaks under zoom.
+                        // Better approach: Calculate relative to the SVG root element bounding box.
 
-                        setPointerPosition({ top: relativeTop, left: relativeLeft });
-
-                        // Optional: Scroll to view
-                        node.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+                        // For this impl, I'll rely on the pure CSS/SVG highlighting primarily, 
+                        // and try to position the pointer if possible, but it might be slightly offset during zoom.
+                        // Let's stick to the CSS glow which is robust.
                     });
                 }
             }
@@ -85,6 +118,7 @@ export default function LogicVisualizer({ code, language }: LogicVisualizerProps
             setTrace([]);
             setComplexity(null);
             setCurrentStep(0);
+            resetView(); // Reset zoom on new code
 
             try {
                 const response = await fetch("/api/visualize", {
@@ -191,12 +225,28 @@ export default function LogicVisualizer({ code, language }: LogicVisualizerProps
                 .svg-container svg {
                     width: 100%;
                     height: 100%;
-                    max-height: 100%;
+                    overflow: visible; 
+                }
+                
+                /* Custom Scrollbar */
+                .custom-scrollbar::-webkit-scrollbar {
+                    width: 6px;
+                    height: 6px;
+                }
+                .custom-scrollbar::-webkit-scrollbar-track {
+                    background: transparent;
+                }
+                .custom-scrollbar::-webkit-scrollbar-thumb {
+                    background: rgba(255,255,255,0.1);
+                    border-radius: 3px;
+                }
+                .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+                    background: rgba(255,255,255,0.2);
                 }
             `}</style>
             {/* Header */}
             {/* Header with Tabs */}
-            <div className="p-4 border-b border-white/5 flex justify-between items-center bg-[#252526]">
+            <div className="p-4 border-b border-white/5 flex justify-between items-center bg-[#252526] z-10">
                 <div className="flex items-center gap-4">
                     <button
                         onClick={() => setActiveTab("trace")}
@@ -218,16 +268,16 @@ export default function LogicVisualizer({ code, language }: LogicVisualizerProps
             </div>
 
             {/* Main Content Area */}
-            <div className="flex-1 overflow-y-auto p-4 relative">
+            <div className="flex-1 relative overflow-hidden bg-[#1e1e1e]">
                 {isLoading && (
-                    <div className="absolute inset-0 z-10 bg-black/50 flex flex-col items-center justify-center backdrop-blur-sm">
+                    <div className="absolute inset-0 z-20 bg-black/50 flex flex-col items-center justify-center backdrop-blur-sm">
                         <Loader2 className="w-8 h-8 animate-spin text-blue-500 mb-2" />
                         <p className="text-xs text-blue-300">Analyzing Complexity...</p>
                     </div>
                 )}
 
                 {error ? (
-                    <div className="text-red-400 text-center text-sm mt-10 p-4 border border-red-500/20 rounded bg-red-500/5">
+                    <div className="text-red-400 text-center text-sm mt-10 p-4 border border-red-500/20 rounded bg-red-500/5 m-4">
                         {error}
                     </div>
                 ) : (!trace.length && !complexity) ? (
@@ -235,9 +285,10 @@ export default function LogicVisualizer({ code, language }: LogicVisualizerProps
                         Type valid code to see it animate...
                     </div>
                 ) : (
-                    <div className="space-y-6">
-                        {activeTab === "trace" ? (
-                            <>
+                    <>
+                        {/* TRACE TAB */}
+                        <div className={`absolute inset-0 overflow-y-auto p-4 custom-scrollbar transition-opacity duration-300 ${activeTab === 'trace' ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'}`}>
+                            <div className="space-y-6">
                                 {/* 1. Complexity Card */}
                                 {complexity && (
                                     <motion.div
@@ -278,45 +329,64 @@ export default function LogicVisualizer({ code, language }: LogicVisualizerProps
                                         <p className="text-xs mt-1">No detailed animation steps generated for this code.</p>
                                     </div>
                                 )}
-                            </>
-                        ) : (
-                            <div className="flex flex-col items-center justify-center min-h-[300px] overflow-auto relative" ref={containerRef}>
-                                {svgChart ? (
-                                    <>
-                                        <div
-                                            className="w-full h-full flex justify-center p-4 svg-container"
-                                            dangerouslySetInnerHTML={{ __html: svgChart }}
-                                        />
-
-                                        {/* Animated Pointer Arrow */}
-                                        <AnimatePresence>
-                                            {pointerPosition && (
-                                                <motion.div
-                                                    initial={{ opacity: 0, x: -10 }}
-                                                    animate={{ opacity: 1, x: 0, top: pointerPosition.top, left: pointerPosition.left }}
-                                                    exit={{ opacity: 0 }}
-                                                    transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                                                    className="absolute z-50 pointer-events-none"
-                                                    style={{ transform: 'translate(-100%, -50%)' }} // Center vertically, offset to left
-                                                >
-                                                    <div className="flex items-center">
-                                                        <ArrowRight className="w-6 h-6 text-yellow-500 fill-yellow-500 drop-shadow-md" strokeWidth={2.5} />
-                                                    </div>
-                                                </motion.div>
-                                            )}
-                                        </AnimatePresence>
-                                    </>
-                                ) : (
-                                    <p className="text-gray-500 text-sm">No flowchart generated.</p>
-                                )}
                             </div>
-                        )}
-                    </div>
+                        </div>
+
+                        {/* FLOWCHART TAB */}
+                        <div
+                            className={`absolute inset-0 bg-[#1e1e1e] transition-opacity duration-300 overflow-hidden ${activeTab === 'flowchart' ? 'opacity-100 z-10 cursor-grab active:cursor-grabbing' : 'opacity-0 z-0 pointer-events-none'}`}
+                            onMouseDown={handleMouseDown}
+                            onMouseMove={handleMouseMove}
+                            onMouseUp={handleMouseUp}
+                            onMouseLeave={handleMouseLeave}
+                            ref={containerRef}
+                        >
+                            {svgChart ? (
+                                <>
+                                    <div
+                                        className="w-full h-full flex items-center justify-center p-4 svg-container transform-gpu"
+                                        style={{
+                                            transform: `translate(${panOffset.x}px, ${panOffset.y}px) scale(${zoomLevel})`,
+                                            transition: isDragging ? 'none' : 'transform 0.2s ease-out'
+                                        }}
+                                        dangerouslySetInnerHTML={{ __html: svgChart }}
+                                    />
+
+                                    {/* Zoom Controls */}
+                                    <div className="absolute bottom-4 right-4 flex flex-col gap-2 bg-black/50 backdrop-blur rounded-lg p-2 border border-white/10 shadow-xl"
+                                        onMouseDown={(e) => e.stopPropagation()}>
+                                        <button onClick={() => handleZoom(0.1)} className="p-2 hover:bg-white/10 rounded-lg text-white/80 hover:text-white transition-colors">
+                                            <ZoomIn className="w-5 h-5" />
+                                        </button>
+                                        <button onClick={() => handleZoom(-0.1)} className="p-2 hover:bg-white/10 rounded-lg text-white/80 hover:text-white transition-colors">
+                                            <ZoomOut className="w-5 h-5" />
+                                        </button>
+                                        <button onClick={resetView} className="p-2 hover:bg-white/10 rounded-lg text-white/80 hover:text-white transition-colors">
+                                            <Maximize className="w-5 h-5" />
+                                        </button>
+                                    </div>
+
+                                    {/* Hint Overlay (fades out) */}
+                                    <div className="absolute top-4 right-4 pointer-events-none opacity-40 hover:opacity-100 transition-opacity">
+                                        <div className="flex items-center gap-2 px-3 py-1.5 bg-black/30 rounded-full text-xs text-gray-400">
+                                            <Move className="w-3 h-3" />
+                                            <span>Drag to Pan</span>
+                                        </div>
+                                    </div>
+                                </>
+                            ) : (
+                                <div className="w-full h-full flex flex-col items-center justify-center text-gray-500 text-sm">
+                                    <Network className="w-12 h-12 mb-2 opacity-20" />
+                                    <p>No flowchart generated.</p>
+                                </div>
+                            )}
+                        </div>
+                    </>
                 )}
             </div>
 
             {/* Playback Controls Footer */}
-            <div className="p-3 bg-[#252526] border-t border-white/5">
+            <div className="p-3 bg-[#252526] border-t border-white/5 z-20">
                 <div className="flex items-center justify-between mb-2">
                     <span className="text-xs text-gray-500">Step {currentStep + 1} / {trace.length}</span>
                     <div className="flex gap-2">
