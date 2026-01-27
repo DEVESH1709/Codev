@@ -2,6 +2,9 @@ import { createGoogleGenerativeAI } from "@ai-sdk/google";
 import { generateText } from "ai";
 import { NextResponse } from "next/server";
 
+// Run this route on the Node.js runtime instead of Edge to avoid the 10s Edge timeout
+export const runtime = "nodejs";
+
 export async function POST(req: Request) {
   try {
     const { code } = await req.json();
@@ -72,10 +75,26 @@ export async function POST(req: Request) {
         `;
 
 
-    const { text } = await generateText({
-      model: google("gemini-3-flash-preview"),
-      prompt: prompt,
-    });
+    // Helper: call generateText with a timeout to ensure we don't hang indefinitely
+    const generateWithTimeout = async (opts: any, ms = 8000) => {
+      return await Promise.race([
+        generateText(opts),
+        new Promise((_, reject) => setTimeout(() => reject(new Error("AI request timed out")), ms)),
+      ]);
+    };
+
+    let text: string;
+    try {
+      const res = await generateWithTimeout({
+        model: google("gemini-3-flash-preview"),
+        prompt: prompt,
+      }, 8000);
+      // generateText returns an object with `text`
+      text = (res as any).text;
+    } catch (err: any) {
+      console.error("AI request failed or timed out:", err.message || err);
+      return NextResponse.json({ error: "AI request failed or timed out" }, { status: 504 });
+    }
 
     // Clean up markdown code blocks if any (model might still output them)
     const cleanText = text.replace(/```json/g, "").replace(/```/g, "").trim();
