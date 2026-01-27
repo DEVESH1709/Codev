@@ -1,7 +1,7 @@
 "use client"
 
-import { useEffect, useRef, useState } from "react";
-import { Loader2, Play, Pause, ChevronRight, ChevronLeft, RotateCcw } from "lucide-react";
+import { useRef, useState, useEffect } from "react";
+import { Loader2, Play, Pause, ChevronRight, ChevronLeft, RotateCcw, Network, ArrowRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface TraceStep {
@@ -10,6 +10,7 @@ interface TraceStep {
     action: string;
     variables: Record<string, any>;
     highlightIndices?: number[];
+    flowchartNodeId?: string;
     description: string;
 }
 
@@ -20,19 +21,60 @@ interface ComplexityData {
 }
 interface LogicVisualizerProps {
     code: string;
-    language:string;
+    language: string;
 }
 
 
-export default function LogicVisualizer({code, language}:LogicVisualizerProps){
+export default function LogicVisualizer({ code, language }: LogicVisualizerProps) {
 
-    const [trace,setTrace] = useState<TraceStep[]>([]);
-    const [complexity,setComplexity] = useState<ComplexityData | null>(null);
-    const [currentStep,setCurrentStep] = useState(0);
+    const [trace, setTrace] = useState<TraceStep[]>([]);
+    const [complexity, setComplexity] = useState<ComplexityData | null>(null);
+    const [svgChart, setSvgChart] = useState("");
+    const [activeTab, setActiveTab] = useState<"trace" | "flowchart">("trace");
+    const [currentStep, setCurrentStep] = useState(0);
     const [isPlaying, setIsPlaying] = useState((false));
     const [isLoading, setIsLoading] = useState(false);
-     const [error, setError] = useState<string | null>(null);
+    const [error, setError] = useState<string | null>(null);
     const timerRef = useRef<NodeJS.Timeout | null>(null);
+    const [pointerPosition, setPointerPosition] = useState<{ top: number; left: number } | null>(null);
+    const containerRef = useRef<HTMLDivElement>(null);
+    // Handle Active Node Highlighting for SVG
+    useEffect(() => {
+        if (activeTab === "flowchart") {
+            // Reset all active nodes
+            document.querySelectorAll('.active-node').forEach(el => el.classList.remove('active-node'));
+            setPointerPosition(null);
+
+            const activeNodeId = trace[currentStep]?.flowchartNodeId;
+            if (activeNodeId) {
+                // Try to find the node by ID directly (e.g. #node-A)
+                const node = document.getElementById(activeNodeId);
+                const container = containerRef.current;
+
+                if (node && container) {
+                    node.classList.add("active-node");
+
+                    // Allow time for transition or layout stability
+                    requestAnimationFrame(() => {
+                        const nodeRect = node.getBoundingClientRect();
+                        const containerRect = container.getBoundingClientRect();
+
+                        // Calculate position relative to container
+                        // Position arrow to the left of the node, centered vertically
+                        const relativeTop = nodeRect.top - containerRect.top + (nodeRect.height / 2);
+                        const relativeLeft = nodeRect.left - containerRect.left;
+
+                        setPointerPosition({ top: relativeTop, left: relativeLeft });
+
+                        // Optional: Scroll to view
+                        node.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+                    });
+                }
+            }
+        }
+    }, [currentStep, activeTab, trace]);
+
+
 
     useEffect(() => {
         const fetchTrace = async () => {
@@ -57,6 +99,7 @@ export default function LogicVisualizer({code, language}:LogicVisualizerProps){
 
                 setTrace(data.trace || []);
                 setComplexity(data.complexity || null);
+                setSvgChart(data.svgChart || "");
 
             } catch (err) {
                 console.error("Visualizer Error:", err);
@@ -66,11 +109,11 @@ export default function LogicVisualizer({code, language}:LogicVisualizerProps){
             }
         };
 
-        const timeout = setTimeout(fetchTrace, 1500); 
+        const timeout = setTimeout(fetchTrace, 1500);
         return () => clearTimeout(timeout);
     }, [code]);
 
-     useEffect(() => {
+    useEffect(() => {
         if (isPlaying) {
             timerRef.current = setInterval(() => {
                 setCurrentStep((prev) => {
@@ -128,13 +171,49 @@ export default function LogicVisualizer({code, language}:LogicVisualizerProps){
     };
 
     return (
-        <div className="h-full flex flex-col bg-[#1e1e1e] rounded-xl border border-white/[0.05] overflow-hidden shadow-2xl">
+        <div className="h-full flex flex-col bg-[#1e1e1e] rounded-xl border border-white/[0.05] overflow-hidden shadow-2xl relative">
+            <style jsx global>{`
+                .active-node rect, 
+                .active-node circle, 
+                .active-node polygon, 
+                .active-node path {
+                    filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.6));
+                    stroke: white !important;
+                    stroke-width: 2px !important;
+                    transition: all 0.3s ease;
+                }
+                .active-node {
+                    filter: brightness(1.3);
+                    transform: scale(1.02);
+                    transition: all 0.3s ease;
+                    transform-origin: center;
+                }
+                .svg-container svg {
+                    width: 100%;
+                    height: 100%;
+                    max-height: 100%;
+                }
+            `}</style>
             {/* Header */}
+            {/* Header with Tabs */}
             <div className="p-4 border-b border-white/5 flex justify-between items-center bg-[#252526]">
-                <h2 className="text-sm font-medium text-white flex items-center gap-2">
-                    <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                    Algorithm Animator
-                </h2>
+                <div className="flex items-center gap-4">
+                    <button
+                        onClick={() => setActiveTab("trace")}
+                        className={`flex items-center gap-2 text-sm font-medium transition-colors ${activeTab === "trace" ? "text-white" : "text-gray-500 hover:text-gray-300"}`}
+                    >
+                        <div className={`w-2 h-2 rounded-full ${activeTab === "trace" ? "bg-green-500 animate-pulse" : "bg-transparent"}`} />
+                        Trace
+                    </button>
+
+                    <button
+                        onClick={() => setActiveTab("flowchart")}
+                        className={`flex items-center gap-2 text-sm font-medium transition-colors ${activeTab === "flowchart" ? "text-white" : "text-gray-500 hover:text-gray-300"}`}
+                    >
+                        <Network className="w-4 h-4" />
+                        Flowchart
+                    </button>
+                </div>
                 <span className="text-xs text-gray-500">{isLoading ? "Simulating..." : trace.length > 0 ? "Ready" : "Idle"}</span>
             </div>
 
@@ -157,44 +236,79 @@ export default function LogicVisualizer({code, language}:LogicVisualizerProps){
                     </div>
                 ) : (
                     <div className="space-y-6">
-                        {/* 1. Complexity Card */}
-                        {complexity && (
-                            <motion.div
-                                initial={{ opacity: 0, y: -10 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                className="bg-white/5 border border-white/10 rounded-lg p-3"
-                            >
-                                <div className="flex gap-4 mb-2">
-                                    <div className="flex-1 bg-black/20 rounded p-2 text-center">
-                                        <div className="text-[10px] text-gray-400 uppercase tracking-wider">Time Complexity</div>
-                                        <div className="text-lg font-bold text-yellow-500">{complexity.time}</div>
-                                    </div>
-                                    <div className="flex-1 bg-black/20 rounded p-2 text-center">
-                                        <div className="text-[10px] text-gray-400 uppercase tracking-wider">Space Complexity</div>
-                                        <div className="text-lg font-bold text-purple-400">{complexity.space}</div>
-                                    </div>
-                                </div>
-                                <p className="text-xs text-gray-400 italic text-center px-2">
-                                    "{complexity.explanation}"
-                                </p>
-                            </motion.div>
-                        )}
+                        {activeTab === "trace" ? (
+                            <>
+                                {/* 1. Complexity Card */}
+                                {complexity && (
+                                    <motion.div
+                                        initial={{ opacity: 0, y: -10 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        className="bg-white/5 border border-white/10 rounded-lg p-3"
+                                    >
+                                        <div className="flex gap-4 mb-2">
+                                            <div className="flex-1 bg-black/20 rounded p-2 text-center">
+                                                <div className="text-[10px] text-gray-400 uppercase tracking-wider">Time Complexity</div>
+                                                <div className="text-lg font-bold text-yellow-500">{complexity.time}</div>
+                                            </div>
+                                            <div className="flex-1 bg-black/20 rounded p-2 text-center">
+                                                <div className="text-[10px] text-gray-400 uppercase tracking-wider">Space Complexity</div>
+                                                <div className="text-lg font-bold text-purple-400">{complexity.space}</div>
+                                            </div>
+                                        </div>
+                                        <p className="text-xs text-gray-400 italic text-center px-2">
+                                            "{complexity.explanation}"
+                                        </p>
+                                    </motion.div>
+                                )}
 
-                        {/* 2. Visualization Canvas */}
-                        {trace.length > 0 ? (
-                            <div className="min-h-[200px] flex flex-col justify-center">
-                                {/* Render Variables */}
-                                {stepData?.variables && Object.entries(stepData.variables).map(([k, v]) => renderVariable(k, v))}
+                                {/* 2. Visualization Canvas */}
+                                {trace.length > 0 ? (
+                                    <div className="min-h-[200px] flex flex-col justify-center">
+                                        {/* Render Variables */}
+                                        {stepData?.variables && Object.entries(stepData.variables).map(([k, v]) => renderVariable(k, v))}
 
-                                {/* Step Description */}
-                                <div className="mt-4 p-3 bg-blue-500/10 border-l-2 border-blue-500 text-sm text-blue-200">
-                                    {stepData?.description || "Initializing..."}
-                                </div>
-                            </div>
+                                        {/* Step Description */}
+                                        <div className="mt-4 p-3 bg-blue-500/10 border-l-2 border-blue-500 text-sm text-blue-200">
+                                            {stepData?.description || "Initializing..."}
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <div className="text-center text-gray-500 py-10 text-sm">
+                                        <p>Complexity analysis complete.</p>
+                                        <p className="text-xs mt-1">No detailed animation steps generated for this code.</p>
+                                    </div>
+                                )}
+                            </>
                         ) : (
-                            <div className="text-center text-gray-500 py-10 text-sm">
-                                <p>Complexity analysis complete.</p>
-                                <p className="text-xs mt-1">No detailed animation steps generated for this code.</p>
+                            <div className="flex flex-col items-center justify-center min-h-[300px] overflow-auto relative" ref={containerRef}>
+                                {svgChart ? (
+                                    <>
+                                        <div
+                                            className="w-full h-full flex justify-center p-4 svg-container"
+                                            dangerouslySetInnerHTML={{ __html: svgChart }}
+                                        />
+
+                                        {/* Animated Pointer Arrow */}
+                                        <AnimatePresence>
+                                            {pointerPosition && (
+                                                <motion.div
+                                                    initial={{ opacity: 0, x: -10 }}
+                                                    animate={{ opacity: 1, x: 0, top: pointerPosition.top, left: pointerPosition.left }}
+                                                    exit={{ opacity: 0 }}
+                                                    transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                                                    className="absolute z-50 pointer-events-none"
+                                                    style={{ transform: 'translate(-100%, -50%)' }} // Center vertically, offset to left
+                                                >
+                                                    <div className="flex items-center">
+                                                        <ArrowRight className="w-6 h-6 text-yellow-500 fill-yellow-500 drop-shadow-md" strokeWidth={2.5} />
+                                                    </div>
+                                                </motion.div>
+                                            )}
+                                        </AnimatePresence>
+                                    </>
+                                ) : (
+                                    <p className="text-gray-500 text-sm">No flowchart generated.</p>
+                                )}
                             </div>
                         )}
                     </div>
