@@ -4,6 +4,7 @@ import { NextResponse } from "next/server";
 
 // Run this route on the Node.js runtime instead of Edge to avoid the 10s Edge timeout
 export const runtime = "nodejs";
+export const maxDuration = 60; // Allow execution up to 60 seconds
 
 export async function POST(req: Request) {
   try {
