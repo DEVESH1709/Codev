@@ -2,7 +2,6 @@ import { createGoogleGenerativeAI } from "@ai-sdk/google";
 import { generateText } from "ai";
 import { NextResponse } from "next/server";
 
-// Run this route on the Edge runtime strictly to allow longer timeouts (up to 30s-60s on Vercel)
 export const runtime = "edge";
 
 export async function POST(req: Request) {
@@ -89,14 +88,12 @@ export async function POST(req: Request) {
         model: google("gemini-3-flash-preview"),
         prompt: prompt,
       }, 30000);
-      // generateText returns an object with `text`
       text = (res as any).text;
     } catch (err: any) {
       console.error("AI request failed or timed out:", err.message || err);
       return NextResponse.json({ error: "AI request failed or timed out" }, { status: 504 });
     }
 
-    // Clean up markdown code blocks if any (model might still output them)
     const cleanText = text.replace(/```json/g, "").replace(/```/g, "").trim();
 
     let data;
@@ -112,7 +109,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json(data);
   } catch (error: any) {
-    // Log detailed error for debugging
+
     console.warn("⚠️  Gemini API Failed - Using Offline Mode");
     console.warn("Error Details:", error.message || error);
     console.warn("Tip: Check your API key and ensure the Generative Language API is enabled");

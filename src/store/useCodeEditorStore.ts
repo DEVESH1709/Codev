@@ -33,8 +33,10 @@ export const useCodeEditorStore = create<CodeEditorState>((set, get) => {
     output: "",
     isRunning: false,
     error: null,
+    info: null,
     editor: null,
     executionResult: null,
+    stdin: "",
 
     getCode: () => get().editor?.getValue() || "",
 
@@ -53,6 +55,10 @@ export const useCodeEditorStore = create<CodeEditorState>((set, get) => {
     setFontSize: (fontSize: number) => {
       localStorage.setItem("editor-font-size", fontSize.toString());
       set({ fontSize });
+    },
+
+    setStdin: (stdin: string) => {
+      set({ stdin });
     },
 
     setLanguage: (language: string) => {
@@ -93,6 +99,7 @@ export const useCodeEditorStore = create<CodeEditorState>((set, get) => {
             language: runtime.language,
             version: runtime.version,
             files: [{ content: code }],
+            stdin: get().stdin,
           }),
         });
 
