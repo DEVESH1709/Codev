@@ -7,7 +7,11 @@ export default defineSchema({
         email:v.string(),
         name:v.string(),
         isPro:v.boolean(),
-        proSince:v.optional(v.number()),
+    proSince:v.optional(v.number()),
+    // Optional gameplay/metrics fields present in existing documents
+    elo: v.optional(v.number()),
+    wins: v.optional(v.number()),
+    losses: v.optional(v.number()),
         lemonSqueezyCustomerId: v.optional(v.string()),
     lemonSqueezyOrderId: v.optional(v.string()),
 

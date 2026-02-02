@@ -1,4 +1,6 @@
 import { useRef, useState, useEffect } from "react";
+import { useAction } from "convex/react";
+import { api } from "../../../../convex/_generated/api";
 import { Loader2, Play, Pause, ChevronRight, ChevronLeft, RotateCcw, Network, ArrowRight, ZoomIn, ZoomOut, Maximize, Move } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -109,6 +111,7 @@ export default function LogicVisualizer({ code, language }: LogicVisualizerProps
 
 
 
+    const visualizeAction = useAction(api.visualize.generateVisualization);
     useEffect(() => {
         const fetchTrace = async () => {
             if (!code || code.trim().length === 0) return;
@@ -121,20 +124,12 @@ export default function LogicVisualizer({ code, language }: LogicVisualizerProps
             resetView(); // Reset zoom on new code
 
             try {
-                const response = await fetch("/api/visualize", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ code }),
-                });
+                const data = await visualizeAction({ code });
+                if ((data as any)?.error) throw new Error((data as any).error);
 
-                const data = await response.json();
-
-                if (!response.ok || data.error) throw new Error(data.error || "Failed to generate trace");
-
-                setTrace(data.trace || []);
-                setComplexity(data.complexity || null);
-                setSvgChart(data.svgChart || "");
-
+                setTrace((data as any).trace || []);
+                setComplexity((data as any).complexity || null);
+                setSvgChart((data as any).svgChart || "");
             } catch (err) {
                 console.error("Visualizer Error:", err);
                 setError("Unable to simulate this code.");
@@ -145,7 +140,7 @@ export default function LogicVisualizer({ code, language }: LogicVisualizerProps
 
         const timeout = setTimeout(fetchTrace, 1500);
         return () => clearTimeout(timeout);
-    }, [code]);
+    }, [code, visualizeAction]);
 
     useEffect(() => {
         if (isPlaying) {

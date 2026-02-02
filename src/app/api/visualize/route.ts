@@ -2,6 +2,9 @@ import { createGoogleGenerativeAI } from "@ai-sdk/google";
 import { generateText } from "ai";
 import { NextResponse } from "next/server";
 
+// Run on Node.js runtime (Serverless) instead of Edge
+export const maxDuration = 60; // Vercel will cap based on plan; Hobby is ~10s
+
 export async function POST(req: Request) {
   try {
     const { code } = await req.json();
@@ -69,10 +72,26 @@ export async function POST(req: Request) {
         `;
 
 
-    const { text } = await generateText({
-      model: google("gemini-3-flash-preview"),
-      prompt: prompt,
-    });
+    // Helper: ensure we return before Vercel's 10s Hobby timeout
+    const generateWithTimeout = async (opts: any, ms = 9000) => {
+      return await Promise.race([
+        generateText(opts),
+        new Promise((_, reject) => setTimeout(() => reject(new Error("AI request timed out")), ms)),
+      ]);
+    };
+
+    let text: string;
+    try {
+      const res = await generateWithTimeout({
+        // Use a faster, generally available Gemini model
+        model: google("gemini-1.5-flash"),
+        prompt: prompt,
+      }, 9000);
+      text = (res as any).text;
+    } catch (err: any) {
+      console.error("AI request failed or timed out:", err?.message || err);
+      return NextResponse.json({ error: "AI request failed or timed out" }, { status: 504 });
+    }
 
     // Clean up markdown code blocks if any (model might still output them)
     const cleanText = text.replace(/```json/g, "").replace(/```/g, "").trim();
@@ -82,7 +101,10 @@ export async function POST(req: Request) {
       data = JSON.parse(cleanText);
     } catch (e) {
       console.error("Failed to parse AI JSON:", cleanText);
-      return NextResponse.json({ error: "Failed to parse visualization data" }, { status: 500 });
+      const debug = process.env.NODE_ENV !== "production";
+      const body: any = { error: "Failed to parse visualization data" };
+      if (debug) body.raw = cleanText;
+      return NextResponse.json(body, { status: 500 });
     }
 
     return NextResponse.json(data);
