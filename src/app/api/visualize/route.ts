@@ -2,14 +2,9 @@ import { createGoogleGenerativeAI } from "@ai-sdk/google";
 import { generateText } from "ai";
 import { NextResponse } from "next/server";
 
-export const runtime = "edge";
-
 export async function POST(req: Request) {
   try {
     const { code } = await req.json();
-    if (!code) {
-      return NextResponse.json({ error: "Missing `code` in request body" }, { status: 400 });
-    }
     const apiKey = process.env.GEMINI_API_KEY;
 
     if (!apiKey) {
@@ -74,26 +69,12 @@ export async function POST(req: Request) {
         `;
 
 
-    // Helper: call generateText with a timeout to ensure we don't hang indefinitely
-    const generateWithTimeout = async (opts: any, ms = 30000) => {
-      return await Promise.race([
-        generateText(opts),
-        new Promise((_, reject) => setTimeout(() => reject(new Error("AI request timed out")), ms)),
-      ]);
-    };
+    const { text } = await generateText({
+      model: google("gemini-3-flash-preview"),
+      prompt: prompt,
+    });
 
-    let text: string;
-    try {
-      const res = await generateWithTimeout({
-        model: google("gemini-3-flash-preview"),
-        prompt: prompt,
-      }, 30000);
-      text = (res as any).text;
-    } catch (err: any) {
-      console.error("AI request failed or timed out:", err.message || err);
-      return NextResponse.json({ error: "AI request failed or timed out" }, { status: 504 });
-    }
-
+    // Clean up markdown code blocks if any (model might still output them)
     const cleanText = text.replace(/```json/g, "").replace(/```/g, "").trim();
 
     let data;
@@ -101,15 +82,12 @@ export async function POST(req: Request) {
       data = JSON.parse(cleanText);
     } catch (e) {
       console.error("Failed to parse AI JSON:", cleanText);
-      const debug = process.env.NODE_ENV !== "production";
-      const body: any = { error: "Failed to parse visualization data" };
-      if (debug) body.raw = cleanText;
-      return NextResponse.json(body, { status: 500 });
+      return NextResponse.json({ error: "Failed to parse visualization data" }, { status: 500 });
     }
 
     return NextResponse.json(data);
   } catch (error: any) {
-
+    // Log detailed error for debugging
     console.warn("⚠️  Gemini API Failed - Using Offline Mode");
     console.warn("Error Details:", error.message || error);
     console.warn("Tip: Check your API key and ensure the Generative Language API is enabled");
@@ -117,8 +95,4 @@ export async function POST(req: Request) {
     // Return error to frontend
     return NextResponse.json({ error: "AI Service Failed: " + (error.message || "Unknown error") }, { status: 500 });
   }
-}
-
-export async function GET() {
-  return NextResponse.json({ error: "Method GET not allowed. Use POST with JSON body { code }" }, { status: 405 });
 }
