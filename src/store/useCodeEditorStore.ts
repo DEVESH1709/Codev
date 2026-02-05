@@ -9,6 +9,7 @@ const getInitialState = () => {
     return {
       language: "javascript",
       fontSize: 16,
+      editorWidth: 800,
       theme: "vs-dark",
     };
   }
@@ -17,11 +18,13 @@ const getInitialState = () => {
   const savedLanguage = localStorage.getItem("editor-language") || "javascript";
   const savedTheme = localStorage.getItem("editor-theme") || "vs-dark";
   const savedFontSize = localStorage.getItem("editor-font-size") || 16;
+  const savedEditorWidth = localStorage.getItem("editor-width") || "800";
 
   return {
     language: savedLanguage,
     theme: savedTheme,
     fontSize: Number(savedFontSize),
+    editorWidth: Number(savedEditorWidth),
   };
 };
 
@@ -55,6 +58,11 @@ export const useCodeEditorStore = create<CodeEditorState>((set, get) => {
     setFontSize: (fontSize: number) => {
       localStorage.setItem("editor-font-size", fontSize.toString());
       set({ fontSize });
+    },
+
+    setEditorWidth: (width: number) => {
+      localStorage.setItem("editor-width", width.toString());
+      set({ editorWidth: width });
     },
 
     setStdin: (stdin: string) => {

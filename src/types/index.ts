@@ -55,6 +55,8 @@ export interface CodeEditorState {
   setFontSize: (fontSize: number) => void;
   setStdin: (stdin: string) => void;
   runCode: () => Promise<void>;
+  editorWidth: number;
+  setEditorWidth: (width: number) => void;
 }
 
 export interface Snippet {
