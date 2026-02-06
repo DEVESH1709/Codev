@@ -56,10 +56,10 @@ function EditorPanel() {
   if (!mounted) return null;
 
   return (
-    <div className="relative">
-      <div className="relative bg-[#12121a]/90 backdrop-blur rounded-xl border border-white/[0.05] p-4 md:p-6">
+    <div className="relative h-full">
+      <div className="relative bg-[#12121a]/90 backdrop-blur rounded-xl border border-white/[0.05] p-4 md:p-6 h-full flex flex-col">
         {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4 shrink-0">
           <div className="flex items-center gap-3">
             <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-[#1e1e2e] ring-1 ring-white/5">
               <Image src={"/" + language + ".png"} alt="Logo" width={24} height={24} />
@@ -133,11 +133,11 @@ function EditorPanel() {
         </div>
 
         {/* Editor */}
-        <div className={`grid gap-4 ${isDiagramOpen ? "grid-cols-2" : "grid-cols-1"}`}>
-          <div className="relative group rounded-xl overflow-hidden ring-1 ring-white/[0.05]">
+        <div className={`grid gap-4 ${isDiagramOpen ? "grid-cols-2" : "grid-cols-1"} flex-1 min-h-0`}>
+          <div className="relative group rounded-xl overflow-hidden ring-1 ring-white/[0.05] h-full">
             {clerk.loaded && (
               <Editor
-                height="600px"
+                height="100%"
                 language={LANGUAGE_CONFIG[language].monacoLanguage}
                 onChange={handleEditorChange}
                 theme={theme}
@@ -172,7 +172,7 @@ function EditorPanel() {
 
           {/* Logic Visualizer Panel */}
           {isDiagramOpen && (
-            <div className="h-[600px]">
+            <div className="h-full">
               <LogicVisualizer
                 language={language}
                 code={currentCode}

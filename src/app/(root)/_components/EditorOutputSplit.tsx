@@ -42,34 +42,30 @@ export default function EditorOutputSplit() {
 
   if (!mounted) return null;
 
-  const isLarge = typeof window !== "undefined" ? window.innerWidth >= 1024 : false;
-
   return (
-    <div ref={containerRef} className="relative max-w-[1800px] mx-auto p-4">
+    <div ref={containerRef} className="relative w-full flex-1 flex flex-col min-h-0">
       <div
-        className="grid grid-cols-1 lg:grid-cols-2 gap-4"
-        style={isLarge ? { gridTemplateColumns: `${editorWidth}px 1fr` } : undefined}
+        className="grid grid-cols-1 lg:grid-cols-[var(--editor-width)_1fr] gap-4 flex-1 h-full min-h-0"
+        style={{ "--editor-width": `${editorWidth}px` } as React.CSSProperties}
       >
-        <div>
+        <div className="h-full min-h-0">
           <EditorPanel />
         </div>
 
-        <div>
+        <div className="h-full min-h-0">
           <OutputPanel />
         </div>
       </div>
 
-      {isLarge && (
-        <div
-          onMouseDown={onMouseDown}
-          className="absolute top-0 bottom-0 z-40 w-3 -translate-x-1/2 cursor-col-resize"
-          style={{ left: editorWidth }}
-          role="separator"
-          aria-orientation="vertical"
-        >
-          <div className="h-full w-1 bg-transparent hover:bg-white/5 mx-auto" />
-        </div>
-      )}
+      <div
+        onMouseDown={onMouseDown}
+        className="hidden lg:block absolute top-0 bottom-0 z-40 w-3 -translate-x-1/2 cursor-col-resize hover:w-4 transition-all"
+        style={{ left: editorWidth }}
+        role="separator"
+        aria-orientation="vertical"
+      >
+        <div className="h-full w-1 bg-white/5 hover:bg-blue-500/50 mx-auto rounded-full transition-colors" />
+      </div>
     </div>
   );
 }

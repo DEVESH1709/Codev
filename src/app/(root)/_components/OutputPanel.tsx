@@ -21,10 +21,10 @@ function OutputPanel() {
   };
 
   return (
-    <div className="relative bg-[#181825] rounded-xl p-4 ring-1 ring-gray-800/50">
-      <div className="flex flex-col space-y-4">
+    <div className="relative bg-[#181825] rounded-xl p-4 ring-1 ring-gray-800/50 h-full flex flex-col">
+      <div className="flex flex-col space-y-4 h-full">
         {/* Output Area */}
-        <div className="relative">
+        <div className="relative flex-1 flex flex-col min-h-0">
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-2">
               <div className="flex items-center justify-center w-6 h-6 rounded-lg bg-[#1e1e2e] ring-1 ring-gray-800/50">
@@ -55,7 +55,7 @@ function OutputPanel() {
 
           <div
             className="relative bg-[#1e1e2e]/50 backdrop-blur-sm border border-[#313244]
-            rounded-xl p-4 h-[350px] overflow-auto font-mono text-sm"
+            rounded-xl p-4 flex-1 overflow-auto font-mono text-sm"
           >
             {isRunning ? (
               <RunningCodeSkeleton />
@@ -87,8 +87,8 @@ function OutputPanel() {
         </div>
 
         {/* Input Area */}
-        <div className="relative">
-          <div className="flex items-center justify-between mb-2">
+        <div className="relative flex-1 flex flex-col min-h-0">
+          <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <div className="flex items-center justify-center w-6 h-6 rounded-lg bg-[#1e1e2e] ring-1 ring-gray-800/50">
                 <Terminal className="w-4 h-4 text-blue-400" />
@@ -97,7 +97,7 @@ function OutputPanel() {
             </div>
           </div>
 
-          <div className="relative bg-[#1e1e2e]/50 backdrop-blur-sm border border-[#313244] rounded-xl p-4 h-[200px] overflow-auto font-mono text-sm [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <div className="relative bg-[#1e1e2e]/50 backdrop-blur-sm border border-[#313244] rounded-xl p-4 flex-1 overflow-auto font-mono text-sm [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             <textarea
               value={stdin}
               onChange={(e) => setStdin(e.target.value)}
