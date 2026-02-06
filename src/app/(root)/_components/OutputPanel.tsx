@@ -55,7 +55,7 @@ function OutputPanel() {
 
           <div
             className="relative bg-[#1e1e2e]/50 backdrop-blur-sm border border-[#313244]
-            rounded-xl p-4 h-[550px] overflow-auto font-mono text-sm"
+            rounded-xl p-4 h-[425px] overflow-auto font-mono text-sm"
           >
             {isRunning ? (
               <RunningCodeSkeleton />
@@ -97,7 +97,7 @@ function OutputPanel() {
             </div>
           </div>
 
-          <div className="relative bg-[#1e1e2e]/50 backdrop-blur-sm border border-[#313244] rounded-xl p-4 h-[300px] overflow-auto font-mono text-sm [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <div className="relative bg-[#1e1e2e]/50 backdrop-blur-sm border border-[#313244] rounded-xl p-4 h-[425px] overflow-auto font-mono text-sm [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             <textarea
               value={stdin}
               onChange={(e) => setStdin(e.target.value)}
