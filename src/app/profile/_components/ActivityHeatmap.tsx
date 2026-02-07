@@ -3,7 +3,7 @@
 import { useQuery } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
 import { useState } from "react";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { ChevronDown } from "lucide-react";
 
 interface ActivityHeatmapProps {
@@ -20,6 +20,7 @@ function ActivityHeatmap({ userData }: ActivityHeatmapProps) {
     const [hoveredDate, setHoveredDate] = useState<{ date: string; count: number } | null>(null);
     const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
     const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+    const [isYearDropdownOpen, setIsYearDropdownOpen] = useState(false);
 
     const handleMouseEnter = (date: string, count: number, event: React.MouseEvent) => {
         setHoveredDate({ date, count });
@@ -78,16 +79,39 @@ function ActivityHeatmap({ userData }: ActivityHeatmapProps) {
                 </div>
                 <div className="flex items-center gap-4">
                     <div className="relative">
-                        <select
-                            value={selectedYear}
-                            onChange={(e) => setSelectedYear(parseInt(e.target.value))}
-                            className="appearance-none bg-[#1e1e2e] border border-gray-800 text-gray-300 text-sm font-medium px-4 py-2 pr-8 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 hover:bg-[#252535] transition-colors cursor-pointer"
+                        <button
+                            onClick={() => setIsYearDropdownOpen(!isYearDropdownOpen)}
+                            className="flex items-center gap-2 px-3 py-2 bg-[#1e1e2e] border border-gray-800 rounded-xl hover:bg-[#252535] transition-colors"
                         >
-                            {years.map(year => (
-                                <option key={year} value={year}>{year}</option>
-                            ))}
-                        </select>
-                        <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
+                            <span className="text-sm font-medium text-gray-300">{selectedYear}</span>
+                            <ChevronDown className={`w-4 h-4 text-gray-500 transition-transform ${isYearDropdownOpen ? "rotate-180" : ""}`} />
+                        </button>
+                        <AnimatePresence>
+                            {isYearDropdownOpen && (
+                                <motion.div
+                                    initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                                    exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                                    className="absolute top-full right-0 mt-2 w-32 bg-[#1e1e2e] border border-gray-800 rounded-xl shadow-xl z-50 overflow-hidden will-change-transform"
+                                >
+                                    {years.map(year => (
+                                        <button
+                                            key={year}
+                                            onClick={() => {
+                                                setSelectedYear(year);
+                                                setIsYearDropdownOpen(false);
+                                            }}
+                                            className={`w-full text-left px-4 py-2 text-sm transition-colors ${selectedYear === year
+                                                ? "bg-blue-500/10 text-blue-400"
+                                                : "text-gray-400 hover:bg-[#252535] hover:text-gray-200"
+                                                }`}
+                                        >
+                                            {year}
+                                        </button>
+                                    ))}
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
                     </div>
 
                     <div className="text-sm font-medium text-blue-400 bg-blue-500/10 px-4 py-2 rounded-xl border border-blue-500/20">
