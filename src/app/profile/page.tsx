@@ -13,6 +13,7 @@ import Image from "next/image";
 import Link from "next/link";
 import StarButton from "@/components/StarButton";
 import CodeBlock from "./_components/CodeBlock";
+import ActivityHeatmap from "./_components/ActivityHeatmap";
 
 const TABS = [
   {
@@ -72,6 +73,9 @@ function ProfilePage() {
 
         {(userStats === undefined || !isLoaded) && <ProfileHeaderSkeleton />}
 
+        {/* Activity Heatmap */}
+        {userData && <ActivityHeatmap userData={userData} />}
+
         {/* Main content */}
         <div
           className="bg-gradient-to-br from-[#12121a] to-[#1a1a2e] rounded-3xl shadow-2xl 
@@ -84,9 +88,8 @@ function ProfilePage() {
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id as "executions" | "starred")}
-                  className={`group flex items-center gap-2 px-6 py-2.5 rounded-lg transition-all duration-200 relative overflow-hidden ${
-                    activeTab === tab.id ? "text-blue-400" : "text-gray-400 hover:text-gray-300"
-                  }`}
+                  className={`group flex items-center gap-2 px-6 py-2.5 rounded-lg transition-all duration-200 relative overflow-hidden ${activeTab === tab.id ? "text-blue-400" : "text-gray-400 hover:text-gray-300"
+                    }`}
                 >
                   {activeTab === tab.id && (
                     <motion.div
@@ -148,11 +151,10 @@ function ProfilePage() {
                             </div>
                             <div className="flex items-center gap-2">
                               <span
-                                className={`text-xs px-2 py-0.5 rounded-full ${
-                                  execution.error
-                                    ? "bg-red-500/10 text-red-400"
-                                    : "bg-green-500/10 text-green-400"
-                                }`}
+                                className={`text-xs px-2 py-0.5 rounded-full ${execution.error
+                                  ? "bg-red-500/10 text-red-400"
+                                  : "bg-green-500/10 text-green-400"
+                                  }`}
                               >
                                 {execution.error ? "Error" : "Success"}
                               </span>
@@ -175,12 +177,11 @@ function ProfilePage() {
                               {execution.error || execution.output}
                             </pre> */}
                             <pre
-  className={`text-sm whitespace-pre-wrap break-words max-w-full overflow-auto ${
-    execution.error ? "text-red-400" : "text-green-400"
-  }`}
->
-  {execution.error || execution.output}
-</pre>
+                              className={`text-sm whitespace-pre-wrap break-words max-w-full overflow-auto ${execution.error ? "text-red-400" : "text-green-400"
+                                }`}
+                            >
+                              {execution.error || execution.output}
+                            </pre>
 
                           </div>
                         )}
