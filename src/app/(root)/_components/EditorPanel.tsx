@@ -40,9 +40,8 @@ function EditorPanel() {
   };
 
   const handleEditorChange = (value: string | undefined) => {
-    // if (value) localStorage.setItem(`editor-code-${language}`, value);
     if (typeof value == "string") {
-      localStorage.setItem(`editor-code ${language}`, value);
+      localStorage.setItem(`editor-code-${language}`, value);
       setCurrentCode(value);
     }
   };

@@ -14,8 +14,21 @@ import Comments from "./_components/Comments";
 function SnippetDetailPage() {
     const snippetId =useParams().id;
  const snippet =useQuery(api.snippets.getSnippetById,{snippetId: snippetId as Id<"snippets">});
-const comments =useQuery(api.snippets.getComments,{snippetId: snippetId as Id<"snippets">})
-if(snippet === undefined ) return <SnippetLoadingSkeleton></SnippetLoadingSkeleton>
+  if (snippet === undefined) return <SnippetLoadingSkeleton />;
+  if (snippet === null) {
+    return (
+      <div className="min-h-screen bg-[#0a0a0f]">
+        <NavigationHeader />
+        <div className="max-w-md mx-auto mt-20 text-center p-8 bg-[#121218] rounded-2xl border border-white/5">
+          <h2 className="text-xl font-semibold text-white mb-2">Snippet Not Found</h2>
+          <p className="text-sm text-gray-400 mb-6">The requested snippet does not exist or has been removed.</p>
+          <a href="/snippets" className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-sm font-medium transition-colors">
+            Back to Snippets
+          </a>
+        </div>
+      </div>
+    );
+  }
 
 
   return (
@@ -71,7 +84,7 @@ if(snippet === undefined ) return <SnippetLoadingSkeleton></SnippetLoadingSkelet
             </div>
             <Editor
               height="600px"
-              language={LANGUAGE_CONFIG[snippet.language].monacoLanguage}
+              language={LANGUAGE_CONFIG[snippet.language]?.monacoLanguage || snippet.language}
               value={snippet.code}
               theme="vs-dark"
               beforeMount={defineMonacoThemes}
