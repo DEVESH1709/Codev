@@ -69,7 +69,7 @@ ${args.code}
     try {
       const res = await generateWithTimeout(
         {
-          model: google("gemini-3-flash-preview"),
+          model: google("gemini-1.5-flash"),
           prompt,
         },
         30000
