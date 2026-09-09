@@ -84,7 +84,8 @@ export default function HeroSection() {
           transition={{ duration: 0.55, delay: 0.1 }}
           className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-white leading-tight"
         >
-          Code Smarter.{" "}
+          Code Smarter.
+          <br />
           <span className="bg-gradient-to-r from-blue-400 via-blue-300 to-purple-400 text-transparent bg-clip-text">
             {displayed}
             <span className="animate-pulse">|</span>
