@@ -56,6 +56,8 @@ export default function RootLayout({
             "bg-[#13131f] border border-white/10 text-slate-200 hover:bg-white/10 hover:border-blue-500/50 transition-all rounded-xl text-sm font-medium",
           socialButtonsBlockButtonText: "text-slate-200 font-medium",
           socialButtonsProviderIcon: "w-4 h-4",
+          // GitHub icon is black by default — invert it so it shows on dark bg
+          "providerIcon__github": "brightness-0 invert",
 
           /* ── Divider ── */
           dividerLine: "bg-white/10",
