@@ -21,38 +21,38 @@ async function Header() {
   return (
     // sticky: stays fixed at top while page scrolls
     <div className="sticky top-0 z-50">
-      <div className="flex flex-col items-center bg-[#0a0a0f]/90 backdrop-blur-xl border-b border-white/5 p-4 mb-4 rounded-lg shadow-lg shadow-black/30">
+      <div className="flex flex-col items-center bg-[#0a0a0f]/90 backdrop-blur-xl border-b border-white/5 p-3 sm:p-4 mb-4 rounded-lg shadow-lg shadow-black/30">
 
         {/* ─── Mobile Layout (< 1024px) ─── */}
-        <div className="w-full flex flex-col gap-4 lg:hidden">
+        <div className="w-full flex flex-col gap-3 lg:hidden">
 
           {/* Row 1: Logo & Profile/Sign In */}
           <div className="flex items-center justify-between gap-3">
-            <Link href="/" className="flex items-center gap-3 group relative">
+            <Link href="/" className="flex items-center gap-2 sm:gap-3 group relative">
               <div className="absolute -inset-2 bg-gradient-to-r from-blue-500/20 to-purple-500 rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-500 blur-xl"></div>
-              <div className="relative bg-gradient-to-br from-[#1a1a2e] to-[#0a0a0f] p-2 rounded-xl ring-1 ring-white/10 group-hover:ring-white/20 transition-all">
-                <Blocks className="size-6 text-blue-400 transform -rotate-6 group-hover:rotate-0 transition-transform duration-500" />
+              <div className="relative bg-gradient-to-br from-[#1a1a2e] to-[#0a0a0f] p-1.5 sm:p-2 rounded-xl ring-1 ring-white/10 group-hover:ring-white/20 transition-all">
+                <Blocks className="size-5 sm:size-6 text-blue-400 transform -rotate-6 group-hover:rotate-0 transition-transform duration-500" />
               </div>
               <div className="flex flex-col">
-                <span className="block text-lg font-semibold bg-gradient-to-r from-blue-400 via-blue-300 to-purple-400 text-transparent bg-clip-text">Codev</span>
-                <span className="block text-xs text-blue-400/60 font-medium">Interactive Code Editor</span>
+                <span className="block text-base sm:text-lg font-semibold bg-gradient-to-r from-blue-400 via-blue-300 to-purple-400 text-transparent bg-clip-text">Codev</span>
+                <span className="block text-[10px] sm:text-xs text-blue-400/60 font-medium">Interactive Code Editor</span>
               </div>
             </Link>
             <HeaderProfileBtn />
           </div>
 
           {/* Single row: Theme, Language | Snippets, Run — compact on mobile */}
-          <div className="flex items-center justify-between gap-2 border-t border-gray-800/50 pt-3">
+          <div className="flex items-center justify-between gap-1.5 sm:gap-2 border-t border-gray-800/50 pt-2.5 w-full">
             {/* Left: Theme + Language always visible */}
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5 sm:gap-2">
               <ThemeSelector />
               <LanguageSelector hasAccess={Boolean(convexUser?.isPro)} />
             </div>
 
             {/* Right: Snippets + Run — only when signed in */}
             <SignedIn>
-              <div className="flex items-center gap-2">
-                <Link href="/snippets" className="group flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-gray-300 bg-gray-800/50 border border-gray-800 hover:border-blue-500/50 transition-all">
+              <div className="flex items-center gap-1.5 sm:gap-2">
+                <Link href="/snippets" className="group flex items-center gap-1 px-2 sm:px-2.5 py-1.5 rounded-lg text-gray-300 bg-gray-800/50 border border-gray-800 hover:border-blue-500/50 transition-all">
                   <Code2 className="w-3.5 h-3.5 group-hover:rotate-3 transition-transform" />
                   <span className="text-xs font-medium">Snippets</span>
                 </Link>
