@@ -41,30 +41,25 @@ async function Header() {
             <HeaderProfileBtn />
           </div>
 
-          {/* Row 2: Theme & Language (always visible) */}
-          <div className="flex items-center justify-center gap-4">
-            <ThemeSelector />
-            <LanguageSelector hasAccess={Boolean(convexUser?.isPro)} />
-          </div>
-
-          {/* Row 3: Snippets, Pro, Run — only when signed in */}
-          <SignedIn>
-            <div className="flex items-center justify-center gap-2 md:gap-4 border-t border-gray-800/50 pt-4">
-              <Link href="/snippets" className="group flex items-center gap-2 px-2 py-1.5 md:px-4 md:py-2 rounded-lg text-gray-300 bg-gray-800/50 border border-gray-800 hover:border-blue-500/50 transition-all">
-                <Code2 className="w-3.5 h-3.5 md:w-4 md:h-4 group-hover:rotate-3 transition-transform" />
-                <span className="text-xs md:text-sm font-medium">Snippets</span>
-              </Link>
-
-              {!convexUser?.isPro && (
-                <Link href="/pricing" className="flex items-center gap-2 px-2 py-1.5 md:px-4 md:py-2 rounded-lg border border-amber-500/20 bg-amber-500/10 hover:bg-amber-500/20 transition-all">
-                  <Sparkles className="w-3.5 h-3.5 md:w-4 md:h-4 text-amber-400" />
-                  <span className="text-xs md:text-sm font-medium text-amber-400">Pro</span>
-                </Link>
-              )}
-
-              <RunButton />
+          {/* Single row: Theme, Language | Snippets, Run — compact on mobile */}
+          <div className="flex items-center justify-between gap-2 border-t border-gray-800/50 pt-3">
+            {/* Left: Theme + Language always visible */}
+            <div className="flex items-center gap-2">
+              <ThemeSelector />
+              <LanguageSelector hasAccess={Boolean(convexUser?.isPro)} />
             </div>
-          </SignedIn>
+
+            {/* Right: Snippets + Run — only when signed in */}
+            <SignedIn>
+              <div className="flex items-center gap-2">
+                <Link href="/snippets" className="group flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-gray-300 bg-gray-800/50 border border-gray-800 hover:border-blue-500/50 transition-all">
+                  <Code2 className="w-3.5 h-3.5 group-hover:rotate-3 transition-transform" />
+                  <span className="text-xs font-medium">Snippets</span>
+                </Link>
+                <RunButton />
+              </div>
+            </SignedIn>
+          </div>
         </div>
 
         {/* ─── Desktop Layout (≥ 1024px) ─── */}
