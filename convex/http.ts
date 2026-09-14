@@ -174,8 +174,7 @@ http.route({
       });
     }
 
-    const payload = await request.json();
-    const body = JSON.stringify(payload);
+    const body = await request.text();
 
     const wh = new Webhook(webhookSecret);
     let evt: WebhookEvent;
