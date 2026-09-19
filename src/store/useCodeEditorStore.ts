@@ -82,6 +82,7 @@ export const useCodeEditorStore = create<CodeEditorState>((set, get) => {
         language,
         output: "",
         error: null,
+        executionResult: null,
       });
     },
 
@@ -90,11 +91,11 @@ export const useCodeEditorStore = create<CodeEditorState>((set, get) => {
       const code = getCode();
 
       if (!code) {
-        set({ error: "Please enter some code" });
+        set({ error: "Please enter some code", executionResult: null });
         return;
       }
 
-      set({ isRunning: true, error: null, output: "" });
+      set({ isRunning: true, error: null, output: "", executionResult: null });
 
       try {
         const runtime = LANGUAGE_CONFIG[language].pistonRuntime;
