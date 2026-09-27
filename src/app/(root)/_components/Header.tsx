@@ -59,18 +59,18 @@ async function Header() {
               </div>
             </div>
 
-            {/* Right: Snippets (if signed in) + Run (always visible) */}
-            <div className="flex items-center gap-1.5 sm:gap-2">
-              <SignedIn>
+            {/* Right: Snippets + Run — only when signed in */}
+            <SignedIn>
+              <div className="flex items-center gap-1.5 sm:gap-2">
                 <Link href="/snippets" className="group flex items-center gap-1 px-2 sm:px-2.5 py-1.5 rounded-lg text-gray-300 bg-gray-800/50 border border-gray-800 hover:border-blue-500/50 transition-all">
                   <Code2 className="w-3.5 h-3.5 group-hover:rotate-3 transition-transform" />
                   <span className="text-xs font-medium">Snippets</span>
                 </Link>
-              </SignedIn>
-              <div data-tour="run-button">
-                <RunButton />
+                <div data-tour="run-button">
+                  <RunButton />
+                </div>
               </div>
-            </div>
+            </SignedIn>
           </div>
         </div>
 
@@ -125,7 +125,7 @@ async function Header() {
               </div>
             </div>
 
-            {/* Pro — only when signed in */}
+            {/* Pro + Run Code — only when signed in */}
             <SignedIn>
               {!convexUser?.isPro && (
                 <Link
@@ -136,12 +136,10 @@ async function Header() {
                   <span className="text-sm font-medium text-amber-400/90 hover:text-amber-300">Pro</span>
                 </Link>
               )}
+              <div data-tour="run-button">
+                <RunButton />
+              </div>
             </SignedIn>
-
-            {/* Run Code — always visible */}
-            <div data-tour="run-button">
-              <RunButton />
-            </div>
 
             {/* Profile — always visible */}
             <div className="pl-3 border-l border-gray-800" data-tour="auth-button">

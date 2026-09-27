@@ -2,6 +2,7 @@
 
 import { useCodeEditorStore } from "@/store/useCodeEditorStore";
 import { useState } from "react";
+import { SignedIn } from "@clerk/nextjs";
 import {
   AlertTriangle,
   CheckCircle,
@@ -43,23 +44,25 @@ function OutputPanel() {
           <span>← Back to Code</span>
         </button>
 
-        <button
-          onClick={runCode}
-          disabled={isRunning}
-          className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white text-xs font-semibold shadow-md shadow-blue-500/20 transition-all active:scale-95 disabled:opacity-50"
-        >
-          {isRunning ? (
-            <>
-              <Loader2 className="w-3.5 h-3.5 animate-spin" />
-              <span>Running...</span>
-            </>
-          ) : (
-            <>
-              <Play className="w-3.5 h-3.5 fill-current" />
-              <span>Run Code</span>
-            </>
-          )}
-        </button>
+        <SignedIn>
+          <button
+            onClick={runCode}
+            disabled={isRunning}
+            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white text-xs font-semibold shadow-md shadow-blue-500/20 transition-all active:scale-95 disabled:opacity-50"
+          >
+            {isRunning ? (
+              <>
+                <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                <span>Running...</span>
+              </>
+            ) : (
+              <>
+                <Play className="w-3.5 h-3.5 fill-current" />
+                <span>Run Code</span>
+              </>
+            )}
+          </button>
+        </SignedIn>
       </div>
 
       <div className="flex flex-col space-y-4 h-full">
@@ -91,18 +94,20 @@ function OutputPanel() {
             />
           </div>
 
-          {/* Quick Run with Input Button on Mobile */}
-          <div className="mt-3 flex lg:hidden items-center justify-between">
-            <span className="text-xs text-gray-500">Provide input to your program</span>
-            <button
-              onClick={runCode}
-              disabled={isRunning}
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white text-xs font-semibold shadow-md shadow-purple-500/20 transition-all active:scale-95 disabled:opacity-50"
-            >
-              <Play className="w-3.5 h-3.5 fill-current" />
-              Run with Input
-            </button>
-          </div>
+          {/* Quick Run with Input Button on Mobile (only when signed in) */}
+          <SignedIn>
+            <div className="mt-3 flex lg:hidden items-center justify-between">
+              <span className="text-xs text-gray-500">Provide input to your program</span>
+              <button
+                onClick={runCode}
+                disabled={isRunning}
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white text-xs font-semibold shadow-md shadow-purple-500/20 transition-all active:scale-95 disabled:opacity-50"
+              >
+                <Play className="w-3.5 h-3.5 fill-current" />
+                Run with Input
+              </button>
+            </div>
+          </SignedIn>
         </div>
 
         {/* Output Area (Hidden on mobile if user selected Input tab) */}

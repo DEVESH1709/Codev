@@ -67,14 +67,18 @@ export default function ProductTour() {
         icon: <Sparkles className="w-5 h-5 text-amber-400" />,
         placement: "bottom",
       },
-      {
-        targetSelector: '[data-tour="run-button"]',
-        title: "Instant Cloud Execution",
-        description:
-          "Hit 'Run' (or press Ctrl/Cmd + Enter) to compile and execute your code safely inside our ultra-fast sandboxed containers.",
-        icon: <Play className="w-5 h-5 text-blue-400" />,
-        placement: "bottom",
-      },
+      ...(isSignedIn
+        ? [
+            {
+              targetSelector: '[data-tour="run-button"]',
+              title: "Instant Cloud Execution",
+              description:
+                "Hit 'Run' (or press Ctrl/Cmd + Enter) to compile and execute your code safely inside our ultra-fast sandboxed containers.",
+              icon: <Play className="w-5 h-5 text-blue-400" />,
+              placement: "bottom" as const,
+            },
+          ]
+        : []),
       {
         targetSelector: '[data-tour="input-output"]',
         title: "Custom Input & Live Output",
@@ -85,10 +89,10 @@ export default function ProductTour() {
       },
       {
         targetSelector: '[data-tour="auth-button"]',
-        title: isSignedIn ? "Your Account & Profile" : "Sign In to Save & Level Up",
+        title: isSignedIn ? "Your Account & Profile" : "Sign In to Run & Save Code",
         description: isSignedIn
           ? "Access your saved snippets, view your solved challenge badges, and manage your account settings."
-          : "Create a free account to save code snippets, earn skill badges, and unlock pro developer capabilities!",
+          : "Sign in with Google or GitHub to execute your code, save snippets, and level up your skills!",
         icon: <LogIn className="w-5 h-5 text-pink-400" />,
         placement: "bottom",
       },
@@ -96,26 +100,24 @@ export default function ProductTour() {
     [isSignedIn]
   );
 
+  const currentTargetSelector = steps[currentStep]?.targetSelector;
+
   // Sync mobile active tab based on tour step so hidden panels become visible & measurable
   useEffect(() => {
     if (!isOpen) return;
-    if (currentStep === 5) {
-      // Step 6: Input & Output -> switch mobile view to output/input panel
+    if (currentTargetSelector === '[data-tour="input-output"]') {
       setMobileTab("output");
     } else {
-      // Steps 1-5 & 7 -> switch back to editor view
       setMobileTab("editor");
     }
-  }, [isOpen, currentStep, setMobileTab]);
+  }, [isOpen, currentTargetSelector, setMobileTab]);
 
   // Measure active step target element
   const updateTargetRect = useCallback(() => {
-    if (!isOpen) return;
-    const step = steps[currentStep];
-    if (!step) return;
+    if (!isOpen || !currentTargetSelector) return;
 
     // Find all matching elements (e.g. mobile vs desktop header) and pick the visible one
-    const elements = document.querySelectorAll(step.targetSelector);
+    const elements = document.querySelectorAll(currentTargetSelector);
     let visibleEl: HTMLElement | null = null;
     for (let i = 0; i < elements.length; i++) {
       const htmlEl = elements[i] as HTMLElement;
@@ -157,7 +159,7 @@ export default function ProductTour() {
     } else {
       setTargetRect(null);
     }
-  }, [isOpen, currentStep, steps]);
+  }, [isOpen, currentTargetSelector]);
 
   // Check first-time visitor status on mount
   useEffect(() => {
