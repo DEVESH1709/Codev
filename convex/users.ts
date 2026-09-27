@@ -74,7 +74,7 @@
 //     },
 // });
 
-import { v } from "convex/values";
+import { ConvexError, v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 
 export const syncUser = mutation({
@@ -164,5 +164,31 @@ export const upgradeToPro = mutation({
     });
 
     return { success: true };
+  },
+});
+
+export const setSkillLevel = mutation({
+  args: {
+    skillLevel: v.union(
+      v.literal("beginner"),
+      v.literal("intermediate"),
+      v.literal("advanced")
+    ),
+  },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) throw new ConvexError("Not authenticated");
+
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_user_id", (q) => q.eq("userId", identity.subject))
+      .first();
+
+    if (!user) throw new ConvexError("User not found");
+
+    await ctx.db.patch(user._id, {
+      skillLevel: args.skillLevel,
+      onboardedAt: Date.now(),
+    });
   },
 });

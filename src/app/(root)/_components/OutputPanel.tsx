@@ -1,11 +1,22 @@
-"use client"
+"use client";
 
 import { useCodeEditorStore } from "@/store/useCodeEditorStore";
 import { useState } from "react";
-import { AlertTriangle, CheckCircle, Clock, Copy, Terminal } from "lucide-react";
+import {
+  AlertTriangle,
+  CheckCircle,
+  Clock,
+  Copy,
+  Terminal,
+  Code2,
+  Play,
+  Loader2,
+} from "lucide-react";
 import RunningCodeSkeleton from "./RunningCodeSkeleton";
+
 function OutputPanel() {
-  const { output, error, isRunning, stdin, setStdin } = useCodeEditorStore();
+  const { output, error, isRunning, stdin, setStdin, mobileTab, setMobileTab, runCode } =
+    useCodeEditorStore();
   const [isCopied, setIsCopied] = useState(false);
 
   const hasContent = error || output;
@@ -21,14 +32,85 @@ function OutputPanel() {
   };
 
   return (
-    <div className="relative bg-[#181825] rounded-xl p-4 ring-1 ring-gray-800/50 h-full flex flex-col">
+    <div data-tour="input-output" className="relative bg-[#181825] rounded-xl p-4 ring-1 ring-gray-800/50 h-full flex flex-col">
+      {/* Mobile Quick Action Bar (Visible only on mobile < lg) */}
+      <div className="flex lg:hidden items-center justify-between pb-3 border-b border-white/5 mb-3">
+        <button
+          onClick={() => setMobileTab("editor")}
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-medium hover:bg-blue-500/20 transition-all active:scale-95"
+        >
+          <Code2 className="w-3.5 h-3.5" />
+          <span>← Back to Code</span>
+        </button>
+
+        <button
+          onClick={runCode}
+          disabled={isRunning}
+          className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white text-xs font-semibold shadow-md shadow-blue-500/20 transition-all active:scale-95 disabled:opacity-50"
+        >
+          {isRunning ? (
+            <>
+              <Loader2 className="w-3.5 h-3.5 animate-spin" />
+              <span>Running...</span>
+            </>
+          ) : (
+            <>
+              <Play className="w-3.5 h-3.5 fill-current" />
+              <span>Run Code</span>
+            </>
+          )}
+        </button>
+      </div>
+
       <div className="flex flex-col space-y-4 h-full">
-        {/* Output Area */}
-        <div className="relative">
+        {/* Input Area (Hidden on mobile if user selected Output tab) */}
+        <div className={`relative ${mobileTab === "output" ? "hidden lg:block" : "block"}`}>
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-2">
               <div className="flex items-center justify-center w-6 h-6 rounded-lg bg-[#1e1e2e] ring-1 ring-gray-800/50">
-                <Terminal className="w-4 h-4 text-blue-400" />
+                <Terminal className="w-4 h-4 text-purple-400" />
+              </div>
+              <span className="text-sm font-medium text-gray-300">Custom Input (stdin)</span>
+            </div>
+            {stdin && (
+              <button
+                onClick={() => setStdin("")}
+                className="text-xs text-gray-500 hover:text-gray-300 transition-colors"
+              >
+                Clear
+              </button>
+            )}
+          </div>
+
+          <div className="relative bg-[#1e1e2e]/50 backdrop-blur-sm border border-[#313244] rounded-xl p-4 h-[440px] lg:h-[425px] overflow-auto font-mono text-sm [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            <textarea
+              value={stdin}
+              onChange={(e) => setStdin(e.target.value)}
+              placeholder="e.g. 5&#10;hello&#10;world"
+              className="w-full h-full bg-transparent text-gray-300 focus:outline-none resize-none placeholder:text-gray-600"
+            />
+          </div>
+
+          {/* Quick Run with Input Button on Mobile */}
+          <div className="mt-3 flex lg:hidden items-center justify-between">
+            <span className="text-xs text-gray-500">Provide input to your program</span>
+            <button
+              onClick={runCode}
+              disabled={isRunning}
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white text-xs font-semibold shadow-md shadow-purple-500/20 transition-all active:scale-95 disabled:opacity-50"
+            >
+              <Play className="w-3.5 h-3.5 fill-current" />
+              Run with Input
+            </button>
+          </div>
+        </div>
+
+        {/* Output Area (Hidden on mobile if user selected Input tab) */}
+        <div className={`relative ${mobileTab === "input" ? "hidden lg:block" : "block"}`}>
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center gap-2">
+              <div className="flex items-center justify-center w-6 h-6 rounded-lg bg-[#1e1e2e] ring-1 ring-gray-800/50">
+                <Terminal className="w-4 h-4 text-emerald-400" />
               </div>
               <span className="text-sm font-medium text-gray-300">Output</span>
             </div>
@@ -40,7 +122,7 @@ function OutputPanel() {
               >
                 {isCopied ? (
                   <>
-                    <CheckCircle className="w-3.5 h-3.5" />
+                    <CheckCircle className="w-3.5 h-3.5 text-emerald-400" />
                     Copied!
                   </>
                 ) : (
@@ -55,7 +137,7 @@ function OutputPanel() {
 
           <div
             className="relative bg-[#1e1e2e]/50 backdrop-blur-sm border border-[#313244]
-            rounded-xl p-4 h-[425px] overflow-auto font-mono text-sm"
+            rounded-xl p-4 h-[480px] lg:h-[425px] overflow-auto font-mono text-sm"
           >
             {isRunning ? (
               <RunningCodeSkeleton />
@@ -83,27 +165,6 @@ function OutputPanel() {
                 <p className="text-center">Run your code to see the output here...</p>
               </div>
             )}
-          </div>
-        </div>
-
-        {/* Input Area */}
-        <div className="relative">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <div className="flex items-center justify-center w-6 h-6 rounded-lg bg-[#1e1e2e] ring-1 ring-gray-800/50">
-                <Terminal className="w-4 h-4 text-blue-400" />
-              </div>
-              <span className="text-sm font-medium text-gray-300">Input</span>
-            </div>
-          </div>
-
-          <div className="relative bg-[#1e1e2e]/50 backdrop-blur-sm border border-[#313244] rounded-xl p-4 h-[425px] overflow-auto font-mono text-sm [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-            <textarea
-              value={stdin}
-              onChange={(e) => setStdin(e.target.value)}
-              placeholder="e.g. 5&#10;hello&#10;world"
-              className="w-full h-full bg-transparent text-gray-300 focus:outline-none resize-none placeholder:text-gray-600"
-            />
           </div>
         </div>
       </div>

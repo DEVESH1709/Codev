@@ -7,6 +7,7 @@ import RunButton from "./RunButton";
 import Link from "next/link";
 import LanguageSelector from "./LanguageSelector";
 import ThemeSelector from "./ThemeSelector";
+import TourTriggerButton from "./TourTriggerButton";
 import { api } from "../../../../convex/_generated/api";
 
 async function Header() {
@@ -38,27 +39,38 @@ async function Header() {
                 <span className="block text-[10px] sm:text-xs text-blue-400/60 font-medium">Interactive Code Editor</span>
               </div>
             </Link>
-            <HeaderProfileBtn />
+            <div className="flex items-center gap-2">
+              <TourTriggerButton />
+              <div data-tour="auth-button">
+                <HeaderProfileBtn />
+              </div>
+            </div>
           </div>
 
           {/* Single row: Theme, Language | Snippets, Run — compact on mobile */}
           <div className="flex items-center justify-between gap-1.5 sm:gap-2 border-t border-gray-800/50 pt-2.5 w-full">
             {/* Left: Theme + Language always visible */}
             <div className="flex items-center gap-1.5 sm:gap-2">
-              <ThemeSelector />
-              <LanguageSelector hasAccess={Boolean(convexUser?.isPro)} />
+              <div data-tour="theme-selector">
+                <ThemeSelector />
+              </div>
+              <div data-tour="language-selector">
+                <LanguageSelector hasAccess={Boolean(convexUser?.isPro)} />
+              </div>
             </div>
 
-            {/* Right: Snippets + Run — only when signed in */}
-            <SignedIn>
-              <div className="flex items-center gap-1.5 sm:gap-2">
+            {/* Right: Snippets (if signed in) + Run (always visible) */}
+            <div className="flex items-center gap-1.5 sm:gap-2">
+              <SignedIn>
                 <Link href="/snippets" className="group flex items-center gap-1 px-2 sm:px-2.5 py-1.5 rounded-lg text-gray-300 bg-gray-800/50 border border-gray-800 hover:border-blue-500/50 transition-all">
                   <Code2 className="w-3.5 h-3.5 group-hover:rotate-3 transition-transform" />
                   <span className="text-xs font-medium">Snippets</span>
                 </Link>
+              </SignedIn>
+              <div data-tour="run-button">
                 <RunButton />
               </div>
-            </SignedIn>
+            </div>
           </div>
         </div>
 
@@ -101,13 +113,19 @@ async function Header() {
 
           {/* Right: Theme, Language, Pro, Run Code, Profile */}
           <div className="flex flex-wrap items-center justify-center sm:justify-end gap-3 sm:gap-4">
+            <TourTriggerButton />
+
             {/* Theme & Language — always visible */}
             <div className="flex items-center gap-2 sm:gap-3">
-              <ThemeSelector />
-              <LanguageSelector hasAccess={Boolean(convexUser?.isPro)} />
+              <div data-tour="theme-selector">
+                <ThemeSelector />
+              </div>
+              <div data-tour="language-selector">
+                <LanguageSelector hasAccess={Boolean(convexUser?.isPro)} />
+              </div>
             </div>
 
-            {/* Pro + Run Code — only when signed in */}
+            {/* Pro — only when signed in */}
             <SignedIn>
               {!convexUser?.isPro && (
                 <Link
@@ -118,11 +136,15 @@ async function Header() {
                   <span className="text-sm font-medium text-amber-400/90 hover:text-amber-300">Pro</span>
                 </Link>
               )}
-              <RunButton />
             </SignedIn>
 
+            {/* Run Code — always visible */}
+            <div data-tour="run-button">
+              <RunButton />
+            </div>
+
             {/* Profile — always visible */}
-            <div className="pl-3 border-l border-gray-800">
+            <div className="pl-3 border-l border-gray-800" data-tour="auth-button">
               <HeaderProfileBtn />
             </div>
           </div>

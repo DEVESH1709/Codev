@@ -18,7 +18,23 @@ function EditorPanel() {
   const [isDiagramOpen, setIsDiagramOpen] = useState(false);
   const { language, theme, fontSize, editor, setFontSize, setEditor } = useCodeEditorStore();
   const [currentCode, setCurrentCode] = useState("");
+  const [editorHeight, setEditorHeight] = useState("850px");
   const mounted = useMounted();
+
+  useEffect(() => {
+    const updateEditorHeight = () => {
+      if (typeof window !== "undefined") {
+        if (window.innerWidth < 1024) {
+          setEditorHeight("540px");
+        } else {
+          setEditorHeight("850px");
+        }
+      }
+    };
+    updateEditorHeight();
+    window.addEventListener("resize", updateEditorHeight);
+    return () => window.removeEventListener("resize", updateEditorHeight);
+  }, []);
 
   useEffect(() => {
     const savedCode = localStorage.getItem(`editor-code-${language}`);
@@ -99,10 +115,11 @@ function EditorPanel() {
               <RotateCcwIcon className="size-4 text-gray-400" />
             </motion.button>
 
-            {clerk.user && <motion.button
+            <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               onClick={() => setIsDiagramOpen(!isDiagramOpen)}
+              data-tour="visualizer-btn"
               className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg overflow-hidden transition-all
                 ${isDiagramOpen
                   ? "bg-blue-500/20 ring-1 ring-blue-500/50 text-blue-400"
@@ -113,7 +130,7 @@ function EditorPanel() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
               </svg>
               <span className="text-sm font-medium">Visual</span>
-            </motion.button>}
+            </motion.button>
 
             {/* Share Button */}
             {clerk.user && (
@@ -133,10 +150,10 @@ function EditorPanel() {
 
         {/* Editor */}
         <div className={`grid gap-4 ${isDiagramOpen ? "grid-cols-2" : "grid-cols-1"} flex-1 min-h-0`}>
-          <div className="relative group rounded-xl overflow-hidden ring-1 ring-white/[0.05] h-full">
+          <div data-tour="code-editor" className="relative group rounded-xl overflow-hidden ring-1 ring-white/[0.05] h-full">
             {clerk.loaded && (
               <Editor
-                height="850px"
+                height={editorHeight}
                 language={LANGUAGE_CONFIG[language].monacoLanguage}
                 onChange={handleEditorChange}
                 theme={theme}

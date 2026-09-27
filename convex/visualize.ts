@@ -46,7 +46,7 @@ Rules:
 3. Generate enough steps to demonstrate the algorithm (at least 5-10 steps).
 4. Return ONLY raw JSON. No markdown formatting.
 5. CRITICAL: Do NOT return an empty trace. If the code is simple, show initialization steps.
-6. Support C++, Python, JavaScript/TS syntax.
+6. Support C++, Python, JavaScript/TypeScript, Java, Go, and Rust syntax.
 7. FLOWCHART GENERATION (SVG):
    - Generate a complete, standalone SVG string for "svgChart".
    - Style: Modern, Sleek, Dark Mode optimized. Use vibrant gradients for nodes.

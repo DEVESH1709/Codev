@@ -40,6 +40,7 @@ export const useCodeEditorStore = create<CodeEditorState>((set, get) => {
     editor: null,
     executionResult: null,
     stdin: "",
+    mobileTab: "editor",
 
     getCode: () => get().editor?.getValue() || "",
 
@@ -69,6 +70,10 @@ export const useCodeEditorStore = create<CodeEditorState>((set, get) => {
       set({ stdin });
     },
 
+    setMobileTab: (mobileTab) => {
+      set({ mobileTab });
+    },
+
     setLanguage: (language: string) => {
       // Save current language code before switching
       const currentCode = get().editor?.getValue();
@@ -91,26 +96,35 @@ export const useCodeEditorStore = create<CodeEditorState>((set, get) => {
       const code = getCode();
 
       if (!code) {
-        set({ error: "Please enter some code", executionResult: null });
+        set({ error: "Please enter some code", executionResult: null, mobileTab: "output" });
         return;
       }
 
-      set({ isRunning: true, error: null, output: "", executionResult: null });
+      set({ isRunning: true, error: null, output: "", executionResult: null, mobileTab: "output" });
 
       try {
         const runtime = LANGUAGE_CONFIG[language].pistonRuntime;
-        const response = await fetch("https://emkc.org/api/v2/piston/execute", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            language: runtime.language,
-            version: runtime.version,
-            files: [{ content: code }],
-            stdin: get().stdin,
-          }),
-        });
+        let response;
+        try {
+          response = await fetch("/api/execute", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              language: runtime.language,
+              version: runtime.version,
+              files: [{ content: code }],
+              stdin: get().stdin,
+            }),
+          });
+        } catch (fetchErr: any) {
+          set({
+            error: "Could not connect to code execution server. Ensure your dev server and Docker are running.",
+            executionResult: { code, output: "", error: "Could not connect to execution engine." }
+          });
+          return;
+        }
 
         const data = await response.json();
 

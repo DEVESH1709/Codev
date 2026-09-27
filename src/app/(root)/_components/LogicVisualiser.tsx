@@ -1,7 +1,7 @@
 import { useRef, useState, useEffect } from "react";
 import { useAction } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
-import { Loader2, Play, Pause, ChevronRight, ChevronLeft, RotateCcw, Network, ArrowRight, ZoomIn, ZoomOut, Maximize, Move } from "lucide-react";
+import { Loader2, Play, Pause, ChevronRight, ChevronLeft, RotateCcw, Network, ArrowRight, ZoomIn, ZoomOut, Maximize, Move, Sparkles, Lightbulb, Info } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface TraceStep {
@@ -112,35 +112,55 @@ export default function LogicVisualizer({ code, language }: LogicVisualizerProps
 
 
     const visualizeAction = useAction(api.visualize.generateVisualization);
-    useEffect(() => {
-        const fetchTrace = async () => {
-            if (!code || code.trim().length === 0) return;
+    const isStarterStub = !code || code.trim().length === 0 || 
+        code.includes("Write your code here") || 
+        code.includes("write your code here");
 
-            setIsLoading(true);
+    const fetchTrace = async () => {
+        if (!code || code.trim().length === 0) return;
+
+        if (isStarterStub) {
             setError(null);
             setTrace([]);
             setComplexity(null);
-            setCurrentStep(0);
-            resetView(); // Reset zoom on new code
+            setIsLoading(false);
+            return;
+        }
 
-            try {
-                const data = await visualizeAction({ code });
-                if ((data as any)?.error) throw new Error((data as any).error);
+        setIsLoading(true);
+        setError(null);
+        setTrace([]);
+        setComplexity(null);
+        setCurrentStep(0);
+        resetView(); // Reset zoom on new code
 
-                setTrace((data as any).trace || []);
-                setComplexity((data as any).complexity || null);
-                setSvgChart((data as any).svgChart || "");
-            } catch (err) {
-                console.error("Visualizer Error:", err);
-                setError("Unable to simulate this code.");
-            } finally {
-                setIsLoading(false);
-            }
-        };
+        try {
+            const data = await visualizeAction({ code });
+            if ((data as any)?.error) throw new Error((data as any).error);
+
+            setTrace((data as any).trace || []);
+            setComplexity((data as any).complexity || null);
+            setSvgChart((data as any).svgChart || "");
+        } catch (err) {
+            console.error("Visualizer Error:", err);
+            setError("Simulation requires completed logic statements.");
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        if (isStarterStub) {
+            setError(null);
+            setTrace([]);
+            setComplexity(null);
+            setIsLoading(false);
+            return;
+        }
 
         const timeout = setTimeout(fetchTrace, 1500);
         return () => clearTimeout(timeout);
-    }, [code, visualizeAction]);
+    }, [code, isStarterStub, visualizeAction]);
 
     useEffect(() => {
         if (isPlaying) {
@@ -271,13 +291,48 @@ export default function LogicVisualizer({ code, language }: LogicVisualizerProps
                     </div>
                 )}
 
-                {error ? (
-                    <div className="text-red-400 text-center text-sm mt-10 p-4 border border-red-500/20 rounded bg-red-500/5 m-4">
-                        {error}
-                    </div>
-                ) : (!trace.length && !complexity) ? (
-                    <div className="text-gray-600 text-center mt-20 text-sm">
-                        Type valid code to see it animate...
+                {(!trace.length && !complexity) ? (
+                    <div className="flex flex-col items-center justify-center p-6 text-center h-full max-w-sm mx-auto select-none">
+                        <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500/20 to-purple-500/20 border border-blue-500/30 flex items-center justify-center mb-3.5 text-blue-400 shadow-lg shadow-blue-500/10">
+                            <Sparkles className="w-6 h-6 text-blue-400" />
+                        </div>
+                        <h3 className="text-white font-semibold text-base mb-1">
+                            {isStarterStub ? "Ready to Visualize" : "Step-by-Step Simulation"}
+                        </h3>
+                        <p className="text-gray-400 text-xs leading-relaxed mb-4">
+                            Write your solution code in the editor to automatically generate variable traces, execution steps, and interactive flowcharts.
+                        </p>
+
+                        <div className="w-full bg-[#252526]/80 border border-white/10 rounded-xl p-3 text-left space-y-2 mb-4">
+                            <div className="flex items-start gap-2.5 text-xs text-gray-300">
+                                <span className="w-4 h-4 rounded-full bg-blue-500/20 text-blue-400 flex items-center justify-center flex-shrink-0 text-[10px] font-bold">1</span>
+                                <span>Complete function implementation in editor</span>
+                            </div>
+                            <div className="flex items-start gap-2.5 text-xs text-gray-300">
+                                <span className="w-4 h-4 rounded-full bg-purple-500/20 text-purple-400 flex items-center justify-center flex-shrink-0 text-[10px] font-bold">2</span>
+                                <span>Include calculations, loops, or conditionals</span>
+                            </div>
+                            <div className="flex items-start gap-2.5 text-xs text-gray-300">
+                                <span className="w-4 h-4 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center flex-shrink-0 text-[10px] font-bold">3</span>
+                                <span>AI simulates execution and graphs logic flow</span>
+                            </div>
+                        </div>
+
+                        {error && (
+                            <div className="w-full flex items-center gap-2 text-xs text-amber-300/90 bg-amber-500/10 border border-amber-500/20 px-3 py-2 rounded-lg mb-3 text-left">
+                                <Lightbulb className="w-4 h-4 text-amber-400 flex-shrink-0" />
+                                <span>Tip: Add working algorithm logic to start simulation.</span>
+                            </div>
+                        )}
+
+                        <button
+                            onClick={() => fetchTrace()}
+                            disabled={isLoading}
+                            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-blue-600/20 hover:bg-blue-600/30 border border-blue-500/30 text-blue-300 text-xs font-medium transition-all"
+                        >
+                            <RotateCcw className={`w-3.5 h-3.5 ${isLoading ? "animate-spin" : ""}`} />
+                            {isLoading ? "Analyzing..." : "Re-analyze Code"}
+                        </button>
                     </div>
                 ) : (
                     <>

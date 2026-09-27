@@ -37,6 +37,8 @@ export interface ExecutionResult {
   error: string | null;
 }
 
+export type MobileTab = "editor" | "output" | "input";
+
 export interface CodeEditorState {
   language: string;
   output: string;
@@ -47,6 +49,7 @@ export interface CodeEditorState {
   editor: Monaco | null;
   executionResult: ExecutionResult | null;
   stdin: string;
+  mobileTab: MobileTab;
 
   setEditor: (editor: Monaco) => void;
   getCode: () => string;
@@ -54,6 +57,7 @@ export interface CodeEditorState {
   setTheme: (theme: string) => void;
   setFontSize: (fontSize: number) => void;
   setStdin: (stdin: string) => void;
+  setMobileTab: (tab: MobileTab) => void;
   runCode: () => Promise<void>;
   editorWidth: number;
   setEditorWidth: (width: number) => void;

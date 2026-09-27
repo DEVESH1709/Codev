@@ -8,6 +8,13 @@ export default defineSchema({
         name:v.string(),
         isPro:v.boolean(),
     proSince:v.optional(v.number()),
+    // Skill level onboarding
+    skillLevel: v.optional(v.union(
+        v.literal("beginner"),
+        v.literal("intermediate"),
+        v.literal("advanced")
+    )),
+    onboardedAt: v.optional(v.number()),
     // Optional gameplay/metrics fields present in existing documents
     elo: v.optional(v.number()),
     wins: v.optional(v.number()),

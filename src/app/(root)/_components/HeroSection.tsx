@@ -4,7 +4,10 @@ import { motion } from "framer-motion";
 import { ArrowRight, Zap, Users, Code2, Sparkles, Play, LogIn } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { useAuth, SignInButton } from "@clerk/nextjs";
+import { useAuth, useUser, SignInButton } from "@clerk/nextjs";
+import { useQuery } from "convex/react";
+import { useRouter } from "next/navigation";
+import { api } from "../../../../convex/_generated/api";
 
 const ROTATING_WORDS = ["Write.", "Debug.", "Visualize.", "Share.", "Execute."];
 
@@ -29,9 +32,17 @@ const STATS = [
 
 export default function HeroSection() {
   const { isSignedIn } = useAuth();
+  const { user } = useUser();
+  const router = useRouter();
   const [wordIndex, setWordIndex] = useState(0);
   const [displayed, setDisplayed] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
+
+  // Query Convex user to check if they have a skillLevel
+  const convexUser = useQuery(
+    api.users.getUser,
+    isSignedIn && user?.id ? { userId: user.id } : "skip"
+  );
 
   useEffect(() => {
     const currentWord = ROTATING_WORDS[wordIndex];
@@ -51,7 +62,13 @@ export default function HeroSection() {
     return () => clearTimeout(timeout);
   }, [displayed, isDeleting, wordIndex]);
 
-  const handleScrollToEditor = () => {
+  const handleStartCoding = () => {
+    // If user hasn't onboarded yet, send them to skill selection
+    if (convexUser && !convexUser.skillLevel) {
+      router.push("/onboarding");
+      return;
+    }
+    // Otherwise scroll to editor
     const el = document.getElementById("editor");
     if (el) {
       el.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -112,7 +129,7 @@ export default function HeroSection() {
           {isSignedIn ? (
             // Signed in → scroll to editor
             <button
-              onClick={handleScrollToEditor}
+              onClick={handleStartCoding}
               className="group inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 text-white font-semibold text-sm transition-all duration-200 shadow-lg shadow-blue-500/20 hover:shadow-blue-500/40 hover:scale-105"
             >
               <Play className="w-4 h-4 group-hover:scale-110 transition-transform" />
