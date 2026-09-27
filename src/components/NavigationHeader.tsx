@@ -1,5 +1,5 @@
 import HeaderProfileBtn from "@/app/(root)/_components/HeaderProfileBtn";
-import { SignedIn } from "@clerk/nextjs";
+import { SignedIn, SignedOut, SignInButton } from "@clerk/nextjs";
 import { Blocks, Code2, Sparkles } from "lucide-react";
 import Link from "next/link";
 
@@ -28,17 +28,33 @@ function NavigationHeader() {
 
             {/* Snippets Link - Hidden on very small screens, visible on small and up */}
             <div className="hidden sm:block">
-              <Link
-                href="/snippets"
-                className="relative group flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 md:px-4 py-1.5 rounded-lg text-gray-300 bg-gray-800/50 hover:bg-blue-500/10 
-                border border-gray-800 hover:border-blue-500/50 transition-all duration-300 shadow-lg overflow-hidden"
-              >
-                <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity" />
-                <Code2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 relative z-10 group-hover:rotate-3 transition-transform" />
-                <span className="text-xs sm:text-sm font-medium relative z-10 group-hover:text-white transition-colors">
-                  Snippets
-                </span>
-              </Link>
+              <SignedIn>
+                <Link
+                  href="/snippets"
+                  className="relative group flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 md:px-4 py-1.5 rounded-lg text-gray-300 bg-gray-800/50 hover:bg-blue-500/10 
+                  border border-gray-800 hover:border-blue-500/50 transition-all duration-300 shadow-lg overflow-hidden"
+                >
+                  <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <Code2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 relative z-10 group-hover:rotate-3 transition-transform" />
+                  <span className="text-xs sm:text-sm font-medium relative z-10 group-hover:text-white transition-colors">
+                    Snippets
+                  </span>
+                </Link>
+              </SignedIn>
+              <SignedOut>
+                <SignInButton mode="modal">
+                  <button
+                    className="relative group flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 md:px-4 py-1.5 rounded-lg text-gray-300 bg-gray-800/50 hover:bg-blue-500/10 
+                    border border-gray-800 hover:border-blue-500/50 transition-all duration-300 shadow-lg overflow-hidden"
+                  >
+                    <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <Code2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 relative z-10 group-hover:rotate-3 transition-transform" />
+                    <span className="text-xs sm:text-sm font-medium relative z-10 group-hover:text-white transition-colors">
+                      Snippets
+                    </span>
+                  </button>
+                </SignInButton>
+              </SignedOut>
             </div>
           </div>
 
@@ -69,14 +85,27 @@ function NavigationHeader() {
 
         {/* Mobile Snippets Link - Only visible on very small screens */}
         <div className="sm:hidden pb-2">
-          <Link
-            href="/snippets"
-            className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-gray-300 bg-gray-800/50 hover:bg-blue-500/10 
-            border border-gray-800 hover:border-blue-500/50 transition-all duration-300 shadow-lg"
-          >
-            <Code2 className="w-4 h-4" />
-            <span className="text-sm font-medium">Snippets</span>
-          </Link>
+          <SignedIn>
+            <Link
+              href="/snippets"
+              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-gray-300 bg-gray-800/50 hover:bg-blue-500/10 
+              border border-gray-800 hover:border-blue-500/50 transition-all duration-300 shadow-lg"
+            >
+              <Code2 className="w-4 h-4" />
+              <span className="text-sm font-medium">Snippets</span>
+            </Link>
+          </SignedIn>
+          <SignedOut>
+            <SignInButton mode="modal">
+              <button
+                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-gray-300 bg-gray-800/50 hover:bg-blue-500/10 
+                border border-gray-800 hover:border-blue-500/50 transition-all duration-300 shadow-lg"
+              >
+                <Code2 className="w-4 h-4" />
+                <span className="text-sm font-medium">Snippets</span>
+              </button>
+            </SignInButton>
+          </SignedOut>
         </div>
       </div>
     </div>

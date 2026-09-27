@@ -1,4 +1,4 @@
-import { SignedIn } from "@clerk/nextjs";
+import { SignedIn, SignedOut, SignInButton } from "@clerk/nextjs";
 import { currentUser } from "@clerk/nextjs/server";
 import { ConvexHttpClient } from "convex/browser"
 import { Blocks, Code2, Sparkles } from "lucide-react";
@@ -59,9 +59,9 @@ async function Header() {
               </div>
             </div>
 
-            {/* Right: Snippets + Run — only when signed in */}
-            <SignedIn>
-              <div className="flex items-center gap-1.5 sm:gap-2">
+            {/* Right: Snippets + Run */}
+            <div className="flex items-center gap-1.5 sm:gap-2">
+              <SignedIn>
                 <Link href="/snippets" className="group flex items-center gap-1 px-2 sm:px-2.5 py-1.5 rounded-lg text-gray-300 bg-gray-800/50 border border-gray-800 hover:border-blue-500/50 transition-all">
                   <Code2 className="w-3.5 h-3.5 group-hover:rotate-3 transition-transform" />
                   <span className="text-xs font-medium">Snippets</span>
@@ -69,8 +69,16 @@ async function Header() {
                 <div data-tour="run-button">
                   <RunButton />
                 </div>
-              </div>
-            </SignedIn>
+              </SignedIn>
+              <SignedOut>
+                <SignInButton mode="modal">
+                  <button className="group flex items-center gap-1 px-2 sm:px-2.5 py-1.5 rounded-lg text-gray-300 bg-gray-800/50 border border-gray-800 hover:border-blue-500/50 transition-all">
+                    <Code2 className="w-3.5 h-3.5 group-hover:rotate-3 transition-transform" />
+                    <span className="text-xs font-medium">Snippets</span>
+                  </button>
+                </SignInButton>
+              </SignedOut>
+            </div>
           </div>
         </div>
 
@@ -94,9 +102,9 @@ async function Header() {
               </div>
             </Link>
 
-            {/* Snippets — only when signed in */}
-            <SignedIn>
-              <nav className="flex items-center space-x-1">
+            {/* Snippets navigation */}
+            <nav className="flex items-center space-x-1">
+              <SignedIn>
                 <Link
                   href="/snippets"
                   className="relative group flex items-center gap-2 px-4 py-1.5 rounded-lg text-gray-300 bg-gray-800/50 hover:bg-blue-500/10 border border-gray-800 hover:border-blue-500/50 transition-all duration-300 shadow-lg overflow-hidden"
@@ -107,8 +115,21 @@ async function Header() {
                     Snippets
                   </span>
                 </Link>
-              </nav>
-            </SignedIn>
+              </SignedIn>
+              <SignedOut>
+                <SignInButton mode="modal">
+                  <button
+                    className="relative group flex items-center gap-2 px-4 py-1.5 rounded-lg text-gray-300 bg-gray-800/50 hover:bg-blue-500/10 border border-gray-800 hover:border-blue-500/50 transition-all duration-300 shadow-lg overflow-hidden"
+                  >
+                    <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <Code2 className="w-4 h-4 relative z-10 group-hover:rotate-3 transition-transform" />
+                    <span className="text-sm font-medium relative z-10 group-hover:text-white transition-colors">
+                      Snippets
+                    </span>
+                  </button>
+                </SignInButton>
+              </SignedOut>
+            </nav>
           </div>
 
           {/* Right: Theme, Language, Pro, Run Code, Profile */}
