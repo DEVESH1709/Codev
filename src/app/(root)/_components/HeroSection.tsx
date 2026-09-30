@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, useMotionValue, useMotionTemplate } from "framer-motion";
-import { ArrowRight, Zap, Users, Code2, Sparkles, Play, LogIn, ChevronDown, CheckCircle2, ShieldCheck, Flame, Compass } from "lucide-react";
+import { ArrowRight, Zap, Users, Code2, Sparkles, Play, LogIn, CheckCircle2, ShieldCheck, Flame } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useAuth, useUser, SignInButton } from "@clerk/nextjs";
@@ -92,13 +92,6 @@ export default function HeroSection() {
       return;
     }
     const el = document.getElementById("editor");
-    if (el) {
-      el.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
-  };
-
-  const handleScrollToSimulator = () => {
-    const el = document.getElementById("platform-simulator");
     if (el) {
       el.scrollIntoView({ behavior: "smooth", block: "start" });
     }
@@ -268,16 +261,6 @@ export default function HeroSection() {
               </button>
             </SignInButton>
           )}
-
-          {/* Quick Scroll To Interactive Simulator Button */}
-          <button
-            onClick={handleScrollToSimulator}
-            className="hidden md:inline-flex items-center gap-1.5 px-4 py-3.5 rounded-xl border border-blue-500/20 bg-blue-500/5 hover:bg-blue-500/15 text-blue-300 hover:text-blue-200 font-medium text-xs transition-all duration-200 hover:scale-105 active:scale-95"
-          >
-            <Compass className="w-3.5 h-3.5 text-blue-400 animate-spin-slow" />
-            <span>Interactive Simulator</span>
-            <ChevronDown className="w-3 h-3 text-blue-400" />
-          </button>
         </motion.div>
 
         {/* Free Tag for signed-out users */}
